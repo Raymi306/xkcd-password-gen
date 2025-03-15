@@ -53,7 +53,7 @@ Wordlist courtesy of the Electronic Frontier Foundation
 - [ ] `cargo test`
 - [ ] `./run_bench.sh`
 
-## Examples ( as of [bb2edf4](https://github.com/Raymi306/xkcd-password-gen/commit/<hash>) )
+## Examples ( as of [b08a313](https://github.com/Raymi306/xkcd-password-gen/commit/b08a313bfed1113cc140ebbfe9a050df7abfe8bb) )
 
 ```
 Usage: target/debug/xkcd-password-gen [options]
