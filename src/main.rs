@@ -1,13 +1,13 @@
-mod password_maker;
 mod config;
 mod consts;
-mod types;
+mod password_maker;
 mod test_helpers;
+mod types;
 mod word_transformer;
 
-use password_maker::PasswordMaker;
 use config::ConfigBuilder;
 use consts::DEFAULT_SYMBOL_ALPHABET;
+use password_maker::PasswordMaker;
 
 use std::env;
 use std::process::ExitCode;
