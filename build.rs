@@ -6,6 +6,9 @@ use std::io::BufRead;
 use std::io::BufReader;
 use std::path::Path;
 
+// correct as of 5b3d7f8cbfa3b69ae2b917f2b9b53f20f5be1ad6
+const WORDLIST_LEN: usize = 7776;
+
 fn read_lines<T>(filename: T) -> io::Result<io::Lines<io::BufReader<File>>>
 where
     T: AsRef<Path>,
@@ -18,7 +21,7 @@ fn main() {
     let out_dir = env::var("OUT_DIR").unwrap();
     let dest_path = Path::new(&out_dir).join("wordlist.rs");
 
-    let mut string_builder_inner = Vec::with_capacity(7776); // number of words in list
+    let mut string_builder_inner = Vec::with_capacity(WORDLIST_LEN);
     let mut words: Option<String> = None;
 
     if let Ok(lines) = read_lines(Path::new("wordlists/eff_large_wordlist.txt")) {

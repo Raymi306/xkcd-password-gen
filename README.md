@@ -15,6 +15,16 @@ I haven't been looking at the original source, but I have been reading the docum
 
 [The wordlist is courtesy of the Electronic Frontier Foundation](https://www.eff.org/files/2016/07/18/eff_large_wordlist.txt)
 
+## Binary Sizes (as of 5b3d7f8cbfa3b69ae2b917f2b9b53f20f5be1ad6)
+
+```
+7.1M  target/debug/xkcd-password-gen
+1.7M  target/release/xkcd-password-gen  // default release profile
+795K  target/release/xkcd-password-gen  // overriden release profile
+755K  target/small/xkcd-password-gen
+ 61K  wordlists/eff_large_wordlist.txt  // the wordlist contributes 61K to the binary size
+```
+
 ## TODO
 
 ### Features
@@ -26,6 +36,9 @@ I haven't been looking at the original source, but I have been reading the docum
 - feature flag to not include default wordlist
 - gui
 - long help or manpage
+- choice between ThreadRng and OSRng
+- change RNG default to OSRng
+- explore reducing binary size more in "small" profile
 
 ### Housekeeping
 
@@ -36,8 +49,19 @@ I haven't been looking at the original source, but I have been reading the docum
 - license
 - logging?
 - macros
+- start updating version
 
-## Examples
+## Checklist Before Release
+
+- [ ] README.md up-to-date?
+- [ ] Cargo.toml package version bumped?
+
+### Items for CI to worry about
+
+- [ ] `cargo fmt` + `cargo clippy`
+- [ ] `cargo test`
+
+## Examples (as of 5b3d7f8cbfa3b69ae2b917f2b9b53f20f5be1ad6)
 
 ```
 Usage: target/debug/xkcd-password-gen [options]
