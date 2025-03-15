@@ -7,7 +7,6 @@ use crate::types::WordTransformation;
 pub enum ValidationError {
     InvalidNumber(u8, u8),
     InvalidEnum(String),
-    DuplicateChoices,
 }
 
 // TODO impl Display and uncomment
