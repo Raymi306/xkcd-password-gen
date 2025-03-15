@@ -29,14 +29,13 @@ I haven't been looking at the original source, but I have been reading the docum
 
 ### Housekeeping
 
-- documentation
+- documentation and comments
 - more automated tests
 - CI
 - releases w/ signed binaries
 - license
 - logging?
 - macros
-- examples in help (correct horse battery staple)
 
 ## Examples
 

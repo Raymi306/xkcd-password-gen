@@ -1,3 +1,4 @@
+#[cfg(test)]
 pub static MOCK_DICTIONARY: [&str; 9] = [
     "modern", "labor", "hello", "world", "water", "fire", "deep", "ice", "pie",
 ];
