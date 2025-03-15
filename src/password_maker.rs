@@ -202,6 +202,7 @@ mod password_maker_tests {
         const WORD_COUNT: u8 = 100;
 
         let mut maker = PasswordMaker::default();
+        maker.wordlist = make_wordlist();
         maker.config.word_count = WORD_COUNT;
 
         let indices: [u32; 2] = [1, 2];
