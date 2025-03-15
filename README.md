@@ -15,16 +15,6 @@ I haven't been looking at the original source, but I have been reading the docum
 
 [The wordlist is courtesy of the Electronic Frontier Foundation](https://www.eff.org/files/2016/07/18/eff_large_wordlist.txt)
 
-## Binary Sizes (as of 5b3d7f8cbfa3b69ae2b917f2b9b53f20f5be1ad6)
-
-```
-7.1M  target/debug/xkcd-password-gen
-1.7M  target/release/xkcd-password-gen  // default release profile
-795K  target/release/xkcd-password-gen  // overriden release profile
-755K  target/small/xkcd-password-gen
- 61K  wordlists/eff_large_wordlist.txt  // the wordlist contributes 61K to the binary size
-```
-
 ## TODO
 
 ### Features
@@ -114,3 +104,12 @@ $ ./target/debug/xkcd-password-gen -c 3
 ~~12_satisfied_KINSHIP_purebred_ESSAY_70~~
 __24?expanse?PAYCHECK?naturist?STEADIER?08__
 ```
+
+## Benchmarks
+
+Kind of silly to measure time given that this isn't an application where performance is critical, but still fun.
+Binary size is much more interesting to me.
+
+### Tooling
+
+[hyperfine](https://github.com/sharkdp/hyperfine)
