@@ -2,9 +2,9 @@
 
 ## Inspiration
 
-https://xkcd.com/936/
-https://www.xkpasswd.net/
-https://metacpan.org/pod/Crypt::HSXKPasswd
+- https://xkcd.com/936/
+- https://www.xkpasswd.net/
+- https://metacpan.org/pod/Crypt::HSXKPasswd
 
 I have used xkpasswd several times in the past and enjoyed it.
 I wanted to make my own version.
