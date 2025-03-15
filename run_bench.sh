@@ -15,7 +15,7 @@ cargo build --profile small
 
 hyperfine --export-markdown benchmarks/hyperfine_$SHORTCOMMIT.md --warmup 3 'target/release/xkcd-password-gen -c 255 > /dev/null' 'target/small/xkcd-password-gen -c 255 > /dev/null'
 
-echo "# Benchmarks - [$SHORTCOMMIT](https://github.com/Raymi306/xkcd-password-gen/commit/$COMMIT)\n" > benchmarks/README.md
+echo "# Benchmarks - [$SHORTCOMMIT](https://github.com/Raymi306/xkcd-password-gen/tree/$COMMIT)\n" > benchmarks/README.md
 echo "## hyperfine\n" >> benchmarks/README.md
 
 cat benchmarks/hyperfine_$SHORTCOMMIT.md >> benchmarks/README.md

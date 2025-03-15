@@ -1,4 +1,4 @@
-# Benchmarks - [b08a313](https://github.com/Raymi306/xkcd-password-gen/commit/b08a313bfed1113cc140ebbfe9a050df7abfe8bb)
+# Benchmarks - [b08a313](https://github.com/Raymi306/xkcd-password-gen/tree/b08a313bfed1113cc140ebbfe9a050df7abfe8bb)
 
 ## hyperfine
 
