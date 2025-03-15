@@ -13,7 +13,8 @@ I haven't been looking at the original source, but I have been reading the docum
 
 ## Resources
 
-[The wordlist is courtesy of the Electronic Frontier Foundation](https://www.eff.org/files/2016/07/18/eff_large_wordlist.txt)
+Wordlist courtesy of the Electronic Frontier Foundation
+- https://www.eff.org/files/2016/07/18/eff_large_wordlist.txt
 
 ## TODO
 
@@ -50,8 +51,9 @@ I haven't been looking at the original source, but I have been reading the docum
 
 - [ ] `cargo fmt` + `cargo clippy`
 - [ ] `cargo test`
+- [ ] `./run_bench.sh`
 
-## Examples (as of 5b3d7f8cbfa3b69ae2b917f2b9b53f20f5be1ad6)
+## Examples ( as of c2009f87ec7263499661e5a48a026150088cc1d6 )
 
 ```
 Usage: target/debug/xkcd-password-gen [options]
@@ -105,7 +107,7 @@ $ ./target/debug/xkcd-password-gen -c 3
 __24?expanse?PAYCHECK?naturist?STEADIER?08__
 ```
 
-## Benchmarks
+## [Benchmarks](benchmarks)
 
 Kind of silly to measure time given that this isn't an application where performance is critical, but still fun.
 Binary size is much more interesting to me.
