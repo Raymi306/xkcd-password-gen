@@ -6,6 +6,11 @@ https://xkcd.com/936/
 https://www.xkpasswd.net/
 https://metacpan.org/pod/Crypt::HSXKPasswd
 
+I have used xkpasswd several times in the past and enjoyed it.
+I wanted to make my own version.
+I am sure the Perl and JavaScript flavors do the job fine, but I wanted a native option.
+I haven't been looking at the original source, but I have been reading the documentation and playing with the website.
+
 ## TODO
 
 - statistics (entropy)
