@@ -16,7 +16,8 @@ I haven't been looking at the original source, but I have been reading the docum
 ### Features
 
 - statistics (entropy)
-- wordlists
+- custom wordlists
+- feature flag to not include default wordlist
 - gui
 - long help or manpage
 
@@ -28,6 +29,8 @@ I haven't been looking at the original source, but I have been reading the docum
 - releases w/ signed binaries
 - license
 - logging?
+- macros
+- examples in help (correct horse battery staple)
 
 ## Examples
 

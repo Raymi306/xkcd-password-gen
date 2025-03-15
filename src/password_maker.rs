@@ -1,3 +1,7 @@
+// provides:
+// static WORDLIST: &[&str] = &[...]
+include!(concat!(env!("OUT_DIR"), "/wordlist.rs"));
+
 use std::iter;
 
 use rand::prelude::*;
@@ -5,7 +9,6 @@ use rand::prelude::*;
 use crate::config::Config;
 use crate::config::ConfigBuilder;
 use crate::consts::DIGIT_ALPHABET;
-use crate::consts::MOCK_DICTIONARY;
 use crate::types::PaddingType;
 use crate::types::WordTransformation;
 use crate::word_transformer;
@@ -25,7 +28,7 @@ impl Default for PasswordMaker<ThreadRng> {
         Self {
             rng: Box::new(ThreadRng::default()),
             config: ConfigBuilder::new().build().unwrap(),
-            wordlist: MOCK_DICTIONARY.into_iter().map(String::from).collect(),
+            wordlist: WORDLIST.iter().map(|s| String::from(*s)).collect(),
         }
     }
 }
@@ -38,7 +41,7 @@ where
         Self {
             rng: Box::new(T::default()),
             config,
-            wordlist: MOCK_DICTIONARY.into_iter().map(String::from).collect(),
+            wordlist: WORDLIST.iter().map(|s| String::from(*s)).collect(),
         }
     }
     fn filter_wordlist(&self) -> Vec<u32> {
