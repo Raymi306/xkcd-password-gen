@@ -13,14 +13,20 @@ I haven't been looking at the original source, but I have been reading the docum
 
 ## TODO
 
+### Features
+
 - statistics (entropy)
 - wordlists
 - gui
+- long help or manpage
+
+### Housekeeping
+
+- documentation
 - more automated tests
-- CI?
+- CI
 - releases w/ signed binaries
 - license
-- long help or manpage
 - logging?
 
 ## Examples
