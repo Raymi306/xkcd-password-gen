@@ -1,5 +1,3 @@
-#![allow(unused)]
-
 pub fn make_wordlist() -> Vec<String> {
     ["modern", "labor", "hello", "world", "water", "fire", "deep", "ice", "pie"]
         .into_iter()

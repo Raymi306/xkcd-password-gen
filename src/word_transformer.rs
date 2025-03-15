@@ -48,7 +48,6 @@ fn capitalize_not_first_char(word: String) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::PasswordMaker;
     use crate::test_helpers::*;
 
     #[test]
@@ -155,7 +154,7 @@ mod tests {
     #[ignore = "needs random seeding"]
     #[test]
     fn test_word_transformer_random() {
-        let mut maker = PasswordMaker::default();
-        random_upper_lower(&mut maker.rng, vec!("hello".to_owned(), "world".to_owned()));
+        let mut rng = ThreadRng::default();
+        random_upper_lower(&mut rng, vec!("hello".to_owned(), "world".to_owned()));
     }
 }

@@ -1,7 +1,7 @@
-use crate::DEFAULT_SYMBOL_ALPHABET;
-use crate::WordTransformation;
-use crate::PaddingType;
-use crate::StrIsEnumMember;
+use crate::consts::DEFAULT_SYMBOL_ALPHABET;
+use crate::types::WordTransformation;
+use crate::types::PaddingType;
+use crate::types::StrIsEnumMember;
 
 #[derive(Clone, Debug)]
 pub enum ValidationError {

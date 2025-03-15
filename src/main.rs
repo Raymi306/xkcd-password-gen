@@ -1,6 +1,6 @@
 use xkcd_password_gen::config::ConfigBuilder;
 use xkcd_password_gen::PasswordMaker;
-use xkcd_password_gen::DEFAULT_SYMBOL_ALPHABET;
+use xkcd_password_gen::consts::DEFAULT_SYMBOL_ALPHABET;
 
 use std::env;
 use std::process::ExitCode;
