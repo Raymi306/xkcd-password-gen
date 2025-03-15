@@ -110,7 +110,8 @@ __24?expanse?PAYCHECK?naturist?STEADIER?08__
 ## [Benchmarks](benchmarks)
 
 Kind of silly to measure time given that this isn't an application where performance is critical, but still fun.
-Binary size is much more interesting to me.
+
+Binary size is more relevant.
 
 ### Tooling
 
