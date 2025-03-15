@@ -11,10 +11,16 @@ I wanted to make my own version.
 I am sure the Perl and JavaScript flavors do the job fine, but I wanted a native option.
 I haven't been looking at the original source, but I have been reading the documentation and playing with the website.
 
+## Resources
+
+[The wordlist is courtesy of the Electronic Frontier Foundation](https://www.eff.org/files/2016/07/18/eff_large_wordlist.txt)
+
 ## TODO
 
 ### Features
 
+- config files
+- presets
 - statistics (entropy)
 - custom wordlists
 - feature flag to not include default wordlist
@@ -39,49 +45,49 @@ Usage: target/debug/xkcd-password-gen [options]
 
 Options:
     -h, --help
-    -c, --count NUM, default=4
+    -c, --count NUM, default=1
                         how many passwords to make
     -w, --word-count NUM, default=4
                         number of words
-        --word-min-length NUM, default=4
+    -m, --word-min-length NUM, default=4
                         minimum length of a chosen word
-        --word-max-length NUM, default=11
+    -M, --word-max-length NUM, default=11
                         maximum length of a chosen word
     -W, --word-transformation TYPE, default=alternating-lower-upper
                         transformation to apply to the selected words
-        --digits-before NUM, default=2
+    -b, --digits-before NUM, default=2
                         number of digits to prepend
-        --digits-after NUM, default=2
+    -a, --digits-after NUM, default=2
                         number of digits to append
-        --padding-type TYPE, default=fixed
+    -T, --padding-type TYPE, default=fixed
                         how to pad
-        --padding-length NUM, default=2
+    -l, --padding-length NUM, default=2
                         how much to pad
-        --padding-character CHOICES, default="!@$%^&*-_+=:|~?/.;"
+    -p, --padding-character CHOICES, default="!@$%^&*-_+=:|~?/.;"
                         list of characters to choose from
-        --separator CHOICES, default="!@$%^&*-_+=:|~?/.;"
+    -s, --separator CHOICES, default="!@$%^&*-_+=:|~?/.;"
                         list of characters to choose from
 
 types are case insensitive
 
 WORD TRANSFORMATIONS:
-    lower
-    upper
-    capitalize-first
-    capitalize-last
-    capitalize-not-first
-    alternating-lower-upper
-    alternating-upper-lower
-    random-upper-lower
+    lower                   (correct horse battery staple)
+    upper                   (CORRECT HORSE BATTERY STAPLE)
+    capitalize-first        (Correct Horse Battery Staple)
+    capitalize-last         (correcT horsE batterY staplE)
+    capitalize-not-first    (cORRECT hORSE bATTERY sTAPLE)
+    alternating-lower-upper (correct HORSE battery STAPLE)
+    alternating-upper-lower (CORRECT horse BATTERY staple)
+    random-upper-lower      (correct HORSE battery staple)
 
 PADDING TYPES:
-    fixed
-    adaptive
+    fixed    (add padding-length padding-characters to front and back)
+    adaptive (if unpadded password is less than padding-length, pad to length)
 ```
 
 ```
 $ ./target/debug/xkcd-password-gen -c 3
-$$34?labor?MODERN?deep?WATER?15$$
-^^83~hello~WATER~world~LABOR~58^^
-!!70%deep%LABOR%hello%WATER%46!!
+||47@amicably@JUDGE@enlarged@DECK@11||
+~~12_satisfied_KINSHIP_purebred_ESSAY_70~~
+__24?expanse?PAYCHECK?naturist?STEADIER?08__
 ```

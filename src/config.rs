@@ -12,6 +12,7 @@ pub enum ValidationError {
 // TODO impl Display and uncomment
 //impl std::error::Error for ValidationError {}
 
+// TODO move defaults into opt space in main as constants
 fn validate_option_string_u8(
     val: Option<String>,
     default: u8,
@@ -86,7 +87,7 @@ impl ConfigBuilder {
     pub fn build(self) -> BuildResult {
         let count = validate_option_string_u8(self.count, 1, 1, 255)?;
         let word_count = validate_option_string_u8(self.word_count, 4, 0, 32)?;
-        let word_min_length = validate_option_string_u8(self.word_min_length, 4, 1, 255)?;
+        let word_min_length = validate_option_string_u8(self.word_min_length, 3, 1, 255)?;
         let word_max_length =
             validate_option_string_u8(self.word_max_length, 11, word_min_length, 255)?;
         let word_transformation: WordTransformation =

@@ -30,16 +30,16 @@ fn main() -> ExitCode {
 
     let mut opts = Options::new();
     opts.optflag("h", "help", "");
-    opts.optopt("c", "count", "how many passwords to make", "NUM, default=4");
+    opts.optopt("c", "count", "how many passwords to make", "NUM, default=1");
     opts.optopt("w", "word-count", "number of words", "NUM, default=4");
     opts.optopt(
-        "",
+        "m",
         "word-min-length",
         "minimum length of a chosen word",
         "NUM, default=4",
     );
     opts.optopt(
-        "",
+        "M",
         "word-max-length",
         "maximum length of a chosen word",
         "NUM, default=11",
@@ -51,27 +51,27 @@ fn main() -> ExitCode {
         "TYPE, default=alternating-lower-upper",
     );
     opts.optopt(
-        "",
+        "b",
         "digits-before",
         "number of digits to prepend",
         "NUM, default=2",
     );
     opts.optopt(
-        "",
+        "a",
         "digits-after",
         "number of digits to append",
         "NUM, default=2",
     );
-    opts.optopt("", "padding-type", "how to pad", "TYPE, default=fixed");
-    opts.optopt("", "padding-length", "how much to pad", "NUM, default=2");
+    opts.optopt("T", "padding-type", "how to pad", "TYPE, default=fixed");
+    opts.optopt("l", "padding-length", "how much to pad", "NUM, default=2");
     opts.optopt(
-        "",
+        "p",
         "padding-character",
         "list of characters to choose from",
         &default_symbol_alphabet_help,
     );
     opts.optopt(
-        "",
+        "s",
         "separator",
         "list of characters to choose from",
         &default_symbol_alphabet_help,
@@ -91,17 +91,17 @@ fn main() -> ExitCode {
         println!("{}", opts.usage(&brief));
         println!("types are case insensitive");
         println!("\nWORD TRANSFORMATIONS:");
-        println!("    lower");
-        println!("    upper");
-        println!("    capitalize-first");
-        println!("    capitalize-last");
-        println!("    capitalize-not-first");
-        println!("    alternating-lower-upper");
-        println!("    alternating-upper-lower");
-        println!("    random-upper-lower");
+        println!("    lower                   (correct horse battery staple)");
+        println!("    upper                   (CORRECT HORSE BATTERY STAPLE)");
+        println!("    capitalize-first        (Correct Horse Battery Staple)");
+        println!("    capitalize-last         (correcT horsE batterY staplE)");
+        println!("    capitalize-not-first    (cORRECT hORSE bATTERY sTAPLE)");
+        println!("    alternating-lower-upper (correct HORSE battery STAPLE)");
+        println!("    alternating-upper-lower (CORRECT horse BATTERY staple)");
+        println!("    random-upper-lower      (correct HORSE battery staple)");
         println!("\nPADDING TYPES:");
-        println!("    fixed");
-        println!("    adaptive");
+        println!("    fixed    (add padding-length padding-characters to front and back)");
+        println!("    adaptive (if unpadded password is less than padding-length, pad to length)");
         return ExitCode::SUCCESS;
     }
 
