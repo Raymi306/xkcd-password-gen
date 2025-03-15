@@ -1,7 +1,7 @@
 use crate::consts::DEFAULT_SYMBOL_ALPHABET;
-use crate::types::WordTransformation;
 use crate::types::PaddingType;
 use crate::types::StrIsEnumMember;
+use crate::types::WordTransformation;
 
 #[derive(Clone, Debug)]
 pub enum ValidationError {
@@ -13,7 +13,12 @@ pub enum ValidationError {
 // TODO impl Display and uncomment
 //impl std::error::Error for ValidationError {}
 
-fn validate_option_string_u8(val: Option<String>, default: u8, min: u8, max: u8) -> Result<u8, ValidationError> {
+fn validate_option_string_u8(
+    val: Option<String>,
+    default: u8,
+    min: u8,
+    max: u8,
+) -> Result<u8, ValidationError> {
     let result = val
         .map(|inner| inner.parse::<u8>())
         .transpose()
@@ -34,9 +39,10 @@ fn string_to_unique_chars(val: String) -> Vec<char> {
 }
 
 fn validate_option_string_enum<T>(val: Option<String>) -> Result<T, ValidationError>
-where T: StrIsEnumMember + Default {
-    val
-        .map(|inner| T::to_member(&inner.to_ascii_lowercase()))
+where
+    T: StrIsEnumMember + Default,
+{
+    val.map(|inner| T::to_member(&inner.to_ascii_lowercase()))
         .transpose()
         .map_err(|_| ValidationError::InvalidEnum("TODO".to_owned()))
         .map(|inner| inner.unwrap_or_default())
@@ -82,8 +88,10 @@ impl ConfigBuilder {
         let count = validate_option_string_u8(self.count, 1, 1, 255)?;
         let word_count = validate_option_string_u8(self.word_count, 4, 0, 32)?;
         let word_min_length = validate_option_string_u8(self.word_min_length, 4, 1, 255)?;
-        let word_max_length = validate_option_string_u8(self.word_max_length, 11, word_min_length, 255)?;
-        let word_transformation: WordTransformation = validate_option_string_enum(self.word_transformation)?;
+        let word_max_length =
+            validate_option_string_u8(self.word_max_length, 11, word_min_length, 255)?;
+        let word_transformation: WordTransformation =
+            validate_option_string_enum(self.word_transformation)?;
         let digits_before = validate_option_string_u8(self.digits_before, 2, 0, 255)?;
         let digits_after = validate_option_string_u8(self.digits_after, 2, 0, 255)?;
         let padding_type: PaddingType = validate_option_string_enum(self.padding_type)?;

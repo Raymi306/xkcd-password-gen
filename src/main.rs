@@ -1,5 +1,5 @@
-use xkcd_password_gen::config::ConfigBuilder;
 use xkcd_password_gen::PasswordMaker;
+use xkcd_password_gen::config::ConfigBuilder;
 use xkcd_password_gen::consts::DEFAULT_SYMBOL_ALPHABET;
 
 use std::env;
@@ -9,7 +9,14 @@ use getopts::Options;
 use rand::rngs::ThreadRng;
 
 fn main() -> ExitCode {
-    let default_symbol_alphabet_help: String = format!("CHOICES, default=\"{}\"", DEFAULT_SYMBOL_ALPHABET.into_iter().map(String::from).collect::<Vec<String>>().join(""));
+    let default_symbol_alphabet_help: String = format!(
+        "CHOICES, default=\"{}\"",
+        DEFAULT_SYMBOL_ALPHABET
+            .into_iter()
+            .map(String::from)
+            .collect::<Vec<String>>()
+            .join("")
+    );
 
     let args: Vec<String> = env::args().collect();
     let program_name = args[0].clone();
@@ -18,15 +25,50 @@ fn main() -> ExitCode {
     opts.optflag("h", "help", "");
     opts.optopt("c", "count", "how many passwords to make", "NUM, default=4");
     opts.optopt("w", "word-count", "number of words", "NUM, default=4");
-    opts.optopt("", "word-min-length", "minimum length of a chosen word", "NUM, default=4");
-    opts.optopt("", "word-max-length", "maximum length of a chosen word", "NUM, default=11");
-    opts.optopt("W", "word-transformation", "transformation to apply to the selected words", "TYPE, default=alternating-lower-upper");
-    opts.optopt("", "digits-before", "number of digits to prepend", "NUM, default=2");
-    opts.optopt("", "digits-after", "number of digits to append", "NUM, default=2");
+    opts.optopt(
+        "",
+        "word-min-length",
+        "minimum length of a chosen word",
+        "NUM, default=4",
+    );
+    opts.optopt(
+        "",
+        "word-max-length",
+        "maximum length of a chosen word",
+        "NUM, default=11",
+    );
+    opts.optopt(
+        "W",
+        "word-transformation",
+        "transformation to apply to the selected words",
+        "TYPE, default=alternating-lower-upper",
+    );
+    opts.optopt(
+        "",
+        "digits-before",
+        "number of digits to prepend",
+        "NUM, default=2",
+    );
+    opts.optopt(
+        "",
+        "digits-after",
+        "number of digits to append",
+        "NUM, default=2",
+    );
     opts.optopt("", "padding-type", "how to pad", "TYPE, default=fixed");
     opts.optopt("", "padding-length", "how much to pad", "NUM, default=2");
-    opts.optopt("", "padding-character", "list of characters to choose from", &default_symbol_alphabet_help);
-    opts.optopt("", "separator", "list of characters to choose from", &default_symbol_alphabet_help);
+    opts.optopt(
+        "",
+        "padding-character",
+        "list of characters to choose from",
+        &default_symbol_alphabet_help,
+    );
+    opts.optopt(
+        "",
+        "separator",
+        "list of characters to choose from",
+        &default_symbol_alphabet_help,
+    );
 
     let matches_maybe = opts.parse(&args[1..]);
 
@@ -38,7 +80,7 @@ fn main() -> ExitCode {
     let matches = matches_maybe.unwrap();
 
     if matches.opt_present("h") || args.len() == 1 {
-        let brief = format!("Usage: {} [options]", program_name); 
+        let brief = format!("Usage: {} [options]", program_name);
         println!("{}", opts.usage(&brief));
         println!("types are case insensitive");
         println!("\nWORD TRANSFORMATIONS:");
