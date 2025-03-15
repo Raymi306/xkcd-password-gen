@@ -2,7 +2,12 @@
 name = "xkcd-password-gen"
 version = "0.1.0"
 edition = "2024"
+authors = ["Andrew Langmeier"]
+description = "A memorable password generator inspired by XKCD 936"
+repository = "https://github.com/Raymi306/xkcd-password-gen"
+categories = ["command-line-utilities"]
+keywords = ["xkcd", "password"]
 
 [dependencies]
-rand = "0.9.0"
+rand = "0.9"
 getopts = "0.2"
