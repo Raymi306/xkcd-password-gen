@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::consts::DEFAULT_SYMBOL_ALPHABET;
 use crate::types::PaddingType;
 use crate::types::StrIsEnumMember;
@@ -9,8 +11,22 @@ pub enum ValidationError {
     InvalidEnum(String),
 }
 
-// TODO impl Display and uncomment
-//impl std::error::Error for ValidationError {}
+impl fmt::Display for ValidationError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let msg = match self {
+            Self::InvalidNumber(min, max) => {
+                format!(
+                    "Value must be a positive integer between {} and {}",
+                    min, max
+                )
+            }
+            Self::InvalidEnum(msg) => msg.clone(),
+        };
+        write!(f, "{}", msg)
+    }
+}
+
+impl std::error::Error for ValidationError {}
 
 // TODO move defaults into opt space in main as constants
 fn validate_option_string_u8(
