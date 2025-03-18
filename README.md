@@ -1,6 +1,7 @@
 # xkcd-password-gen
 
-![xkcd 936](https://imgs.xkcd.com/comics/password_strength_2x.png)
+[xkcd 936](https://xkcd.com/936/)
+![xkcd 936 image](https://imgs.xkcd.com/comics/password_strength_2x.png)
 
 ## Inspiration
 
