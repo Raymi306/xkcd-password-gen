@@ -1,3 +1,30 @@
+use std::fmt;
+
+#[derive(Clone, Debug)]
+pub enum ValidationError {
+    InvalidNumber(u8, u8),
+    InvalidEnum(String),
+    EmptyString,
+}
+
+impl fmt::Display for ValidationError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let msg = match self {
+            Self::InvalidNumber(min, max) => {
+                format!(
+                    "Value must be a positive integer between {} and {}",
+                    min, max
+                )
+            }
+            Self::InvalidEnum(msg) => msg.clone(),
+            Self::EmptyString => "Value must not be empty".to_owned(),
+        };
+        write!(f, "{}", msg)
+    }
+}
+
+impl std::error::Error for ValidationError {}
+
 pub trait StrIsEnumMember: Sized {
     fn to_static_str(&'static self) -> &'static str;
     fn into_iter() -> impl Iterator<Item = (&'static str, Self)>;

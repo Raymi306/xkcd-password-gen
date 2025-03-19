@@ -63,7 +63,12 @@ fn main() -> ExitCode {
         "NUM, default=2",
     );
     opts.optopt("T", "padding-type", "how to pad", "TYPE, default=fixed");
-    opts.optopt("l", "padding-length", "how much to pad", "NUM, default=2");
+    opts.optopt(
+        "l",
+        "padding-length",
+        "how much to pad",
+        "NUM, default=2 for fixed, 32 for adaptive",
+    );
     opts.optopt(
         "p",
         "padding-character",
@@ -118,9 +123,7 @@ fn main() -> ExitCode {
         .padding_character(matches.opt_str("padding-character"))
         .separator_character(matches.opt_str("separator"));
 
-    let config_result = config_builder.build();
-
-    if let Ok(config) = config_result {
+    if let Ok(config) = config_builder.build() {
         let mut maker = PasswordMaker::<ThreadRng>::new(config);
         let result = maker.create_passwords();
         for password in result.unwrap() {

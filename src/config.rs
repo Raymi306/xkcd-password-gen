@@ -1,68 +1,10 @@
-use std::fmt;
+use config_builder_derive::StringConfBuilder;
 
 use crate::consts::DEFAULT_SYMBOL_ALPHABET;
 use crate::types::PaddingType;
 use crate::types::StrIsEnumMember;
 use crate::types::WordTransformation;
-
-#[derive(Clone, Debug)]
-pub enum ValidationError {
-    InvalidNumber(u8, u8),
-    InvalidEnum(String),
-}
-
-impl fmt::Display for ValidationError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let msg = match self {
-            Self::InvalidNumber(min, max) => {
-                format!(
-                    "Value must be a positive integer between {} and {}",
-                    min, max
-                )
-            }
-            Self::InvalidEnum(msg) => msg.clone(),
-        };
-        write!(f, "{}", msg)
-    }
-}
-
-impl std::error::Error for ValidationError {}
-
-// TODO move defaults into opt space in main as constants
-fn validate_option_string_u8(
-    val: Option<String>,
-    default: u8,
-    min: u8,
-    max: u8,
-) -> Result<u8, ValidationError> {
-    let result = val
-        .map(|inner| inner.parse::<u8>())
-        .transpose()
-        .map_err(|_| ValidationError::InvalidNumber(min, max))
-        .map(|inner| inner.unwrap_or(default))?;
-    if result < min || result > max {
-        Err(ValidationError::InvalidNumber(min, max))
-    } else {
-        Ok(result)
-    }
-}
-
-fn string_to_unique_chars(val: String) -> Vec<char> {
-    let mut result = val.chars().collect::<Vec<char>>();
-    result.sort();
-    result.dedup();
-    result
-}
-
-fn validate_option_string_enum<T>(val: Option<String>) -> Result<T, ValidationError>
-where
-    T: StrIsEnumMember + Default,
-{
-    val.map(|inner| T::to_member(&inner.to_ascii_lowercase()))
-        .transpose()
-        .map_err(|_| ValidationError::InvalidEnum("TODO".to_owned()))
-        .map(|inner| inner.unwrap_or_default())
-}
+use crate::types::ValidationError;
 
 #[derive(Debug)]
 pub struct Config {
@@ -79,7 +21,18 @@ pub struct Config {
     pub padding_character: Vec<char>,
 }
 
-#[derive(Debug, Default)]
+const DEFAULT_COUNT: u8 = 2;
+const DEFAULT_WORD_COUNT: u8 = 4;
+const DEFAULT_WORD_MIN_LENGTH: u8 = 3;
+const DEFAULT_WORD_MAX_LENGTH: u8 = 11;
+const DEFAULT_WORD_TRANSFORMATION: WordTransformation = WordTransformation::AlternatingLowerUpper;
+const DEFAULT_DIGITS_BEFORE: u8 = 2;
+const DEFAULT_DIGITS_AFTER: u8 = 2;
+const DEFAULT_PADDING_TYPE: PaddingType = PaddingType::Fixed;
+const DEFAULT_PADDING_LENGTH_FIXED: u8 = 2;
+const DEFAULT_PADDING_LENGTH_ADAPTIVE: u8 = 32;
+
+#[derive(StringConfBuilder, Debug, Default)]
 pub struct ConfigBuilder {
     count: Option<String>,
     word_count: Option<String>,
@@ -94,36 +47,85 @@ pub struct ConfigBuilder {
     padding_character: Option<String>,
 }
 
-pub type BuildResult = std::result::Result<Config, ValidationError>;
-
 impl ConfigBuilder {
     pub fn new() -> Self {
         Default::default()
     }
-    pub fn build(self) -> BuildResult {
-        let count = validate_option_string_u8(self.count, 1, 1, 255)?;
-        let word_count = validate_option_string_u8(self.word_count, 4, 0, 32)?;
-        let word_min_length = validate_option_string_u8(self.word_min_length, 3, 1, 255)?;
-        let word_max_length =
-            validate_option_string_u8(self.word_max_length, 11, word_min_length, 255)?;
-        let word_transformation: WordTransformation =
-            validate_option_string_enum(self.word_transformation)?;
-        let digits_before = validate_option_string_u8(self.digits_before, 2, 0, 255)?;
-        let digits_after = validate_option_string_u8(self.digits_after, 2, 0, 255)?;
-        let padding_type: PaddingType = validate_option_string_enum(self.padding_type)?;
-        let padding_length = validate_option_string_u8(self.padding_length, 2, 0, 255)?;
-        // TODO this will surely fail with empty string?
-        let padding_character = if let Some(inner) = self.padding_character {
-            string_to_unique_chars(inner)
-        } else {
-            DEFAULT_SYMBOL_ALPHABET.to_vec()
-        };
-        let separator_character = if let Some(inner) = self.separator_character {
-            string_to_unique_chars(inner)
-        } else {
-            DEFAULT_SYMBOL_ALPHABET.to_vec()
-        };
-        let result = Config {
+
+    pub fn build(self) -> Result<Config, ValidationError> {
+        macro_rules! validate_u8 {
+            ($value:ident, $min:expr, $max:expr, $default:expr) => {
+                if let Some(inner) = self.$value {
+                    let result = inner
+                        .parse::<u8>()
+                        .map_err(|_| ValidationError::InvalidNumber($min, $max))?;
+
+                    if !($min..=$max).contains(&result) {
+                        Err(ValidationError::InvalidNumber($min, $max))
+                    } else {
+                        Ok(result)
+                    }?
+                } else {
+                    $default
+                }
+            };
+        }
+
+        macro_rules! validate_enum {
+            ($value:ident, $type:ty, $default:expr) => {
+                if let Some(inner) = self.$value {
+                    <$type>::to_member(&inner.to_ascii_lowercase())
+                        .map_err(|_| ValidationError::InvalidEnum("TODO".to_owned()))?
+                } else {
+                    $default
+                }
+            };
+        }
+
+        macro_rules! unique_chars {
+            ($value:ident, $default:ident) => {
+                if let Some(inner) = self.$value {
+                    if inner.is_empty() {
+                        return Err(ValidationError::EmptyString);
+                    }
+                    let mut result = inner.chars().collect::<Vec<char>>();
+                    result.sort();
+                    result.dedup();
+                    Ok(result)
+                } else {
+                    Ok($default.to_vec())
+                }?
+            };
+        }
+
+        let count = validate_u8!(count, 1, 255, DEFAULT_COUNT);
+        let word_count = validate_u8!(word_count, 0, 32, DEFAULT_WORD_COUNT);
+        let word_min_length = validate_u8!(word_min_length, 1, 255, DEFAULT_WORD_MIN_LENGTH);
+        let word_max_length = validate_u8!(
+            word_max_length,
+            word_min_length,
+            255,
+            DEFAULT_WORD_MAX_LENGTH
+        );
+        let word_transformation = validate_enum!(
+            word_transformation,
+            WordTransformation,
+            DEFAULT_WORD_TRANSFORMATION
+        );
+        let digits_before = validate_u8!(digits_before, 0, 255, DEFAULT_DIGITS_BEFORE);
+        let digits_after = validate_u8!(digits_after, 0, 255, DEFAULT_DIGITS_AFTER);
+        let padding_type = validate_enum!(padding_type, PaddingType, DEFAULT_PADDING_TYPE);
+        let padding_length = validate_u8!(padding_length, 0, 255, {
+            match padding_type {
+                PaddingType::Fixed => DEFAULT_PADDING_LENGTH_FIXED,
+                PaddingType::Adaptive => DEFAULT_PADDING_LENGTH_ADAPTIVE,
+                PaddingType::None => 0,
+            }
+        });
+        let padding_character = unique_chars!(padding_character, DEFAULT_SYMBOL_ALPHABET);
+        let separator_character = unique_chars!(separator_character, DEFAULT_SYMBOL_ALPHABET);
+
+        Ok(Config {
             count,
             word_count,
             word_min_length,
@@ -135,52 +137,6 @@ impl ConfigBuilder {
             padding_length,
             padding_character,
             separator_character,
-        };
-        Ok(result)
-    }
-    // TODO macro it up in here
-    pub fn count(mut self, value: Option<String>) -> Self {
-        self.count = value;
-        self
-    }
-    pub fn word_count(mut self, value: Option<String>) -> Self {
-        self.word_count = value;
-        self
-    }
-    pub fn word_min_length(mut self, value: Option<String>) -> Self {
-        self.word_min_length = value;
-        self
-    }
-    pub fn word_max_length(mut self, value: Option<String>) -> Self {
-        self.word_max_length = value;
-        self
-    }
-    pub fn word_transformation(mut self, value: Option<String>) -> Self {
-        self.word_transformation = value;
-        self
-    }
-    pub fn digits_before(mut self, value: Option<String>) -> Self {
-        self.digits_before = value;
-        self
-    }
-    pub fn digits_after(mut self, value: Option<String>) -> Self {
-        self.digits_after = value;
-        self
-    }
-    pub fn padding_type(mut self, value: Option<String>) -> Self {
-        self.padding_type = value;
-        self
-    }
-    pub fn padding_length(mut self, value: Option<String>) -> Self {
-        self.padding_length = value;
-        self
-    }
-    pub fn padding_character(mut self, value: Option<String>) -> Self {
-        self.padding_character = value;
-        self
-    }
-    pub fn separator_character(mut self, value: Option<String>) -> Self {
-        self.separator_character = value;
-        self
+        })
     }
 }

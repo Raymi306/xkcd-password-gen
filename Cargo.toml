@@ -11,6 +11,10 @@ keywords = ["xkcd", "password"]
 [dependencies]
 rand = "0.9"
 getopts = "0.2"
+config-builder-derive = { path = "config-builder-derive" }
+
+[build-dependencies]
+quote = "1.0"
 
 [profile.small]
 inherits = "release"

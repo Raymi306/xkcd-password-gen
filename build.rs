@@ -6,6 +6,8 @@ use std::io::BufRead;
 use std::io::BufReader;
 use std::path::Path;
 
+use quote::quote;
+
 // correct as of 5b3d7f8cbfa3b69ae2b917f2b9b53f20f5be1ad6
 const WORDLIST_LEN: usize = 7776;
 
@@ -21,24 +23,19 @@ fn main() {
     let out_dir = env::var("OUT_DIR").unwrap();
     let dest_path = Path::new(&out_dir).join("wordlist.rs");
 
-    let mut string_builder_inner = Vec::with_capacity(WORDLIST_LEN);
-    let mut words: Option<String> = None;
+    let mut words = Vec::with_capacity(WORDLIST_LEN);
 
     if let Ok(lines) = read_lines(Path::new("wordlists/eff_large_wordlist.txt")) {
         for line in lines.map_while(Result::ok) {
-            string_builder_inner.push(format!("\"{}\"", line));
+            words.push(line.to_string());
         }
-        words = Some(string_builder_inner.join(", "));
     }
 
-    let result = [
-        "static WORDLIST: &[&str] = &[".to_owned(),
-        words.unwrap(),
-        "];".to_owned(),
-    ]
-    .join("");
+    let output = quote! {
+        static WORDLIST: &[&str] = &[#(#words,)*];
+    };
 
-    fs::write(&dest_path, result).unwrap();
+    fs::write(&dest_path, output.to_string()).unwrap();
     println!("cargo::rerun-if-changed=build.rs");
     println!("cargo::rerun-if-changed=wordlists");
 }
