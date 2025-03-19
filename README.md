@@ -18,8 +18,8 @@ Wordlist courtesy of the Electronic Frontier Foundation
 
 ## Dependencies
 
-- rand = "0.9" [(github)](https://github.com/rust-random/rand)[(docs)](https://docs.rs/rand/latest/rand/)
-- getopts = "0.2" [(github)](https://github.com/rust-lang/getopts)[(docs)](https://docs.rs/getopts/latest/getopts/)
+- rand = "0.9" [(docs)](https://docs.rs/rand/latest/rand/)
+- getopts = "0.2" [(docs)](https://docs.rs/getopts/latest/getopts/)
 
 ## TODO
 
