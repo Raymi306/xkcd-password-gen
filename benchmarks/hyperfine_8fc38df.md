@@ -1,17 +1,4 @@
-# Benchmarks - [8fc38df](https://github.com/Raymi306/xkcd-password-gen/tree/8fc38dfafc6ba23d3cbeb394c0473c0873db3dea)
-
-## hyperfine
-
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
 | `target/release/xkcd-password-gen -c 255 > /dev/null` | 64.4 ± 11.0 | 46.4 | 93.1 | 1.14 ± 0.35 |
 | `target/small/xkcd-password-gen -c 255 > /dev/null` | 56.6 ± 14.6 | 36.5 | 86.8 | 1.00 |
-
-## Binary Sizes
-
-- 795K release
-- 755K small
-
-## Wordlist Sizes
-
-- 61K eff_large_wordlist.txt
