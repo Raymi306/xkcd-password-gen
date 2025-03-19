@@ -7,6 +7,7 @@ description = "A memorable password generator inspired by XKCD 936"
 repository = "https://github.com/Raymi306/xkcd-password-gen"
 categories = ["command-line-utilities"]
 keywords = ["xkcd", "password"]
+license = "TODO"
 
 [dependencies]
 rand = "0.9"
@@ -15,6 +16,22 @@ config-builder-derive = { path = "config-builder-derive" }
 
 [build-dependencies]
 quote = "1.0"
+
+[lints.rust]
+unsafe_code = { level = "deny", priority = 0 }
+
+[lints.clippy]
+nursery = { level = "warn", priority = -1 }
+style = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+complexity = { level = "warn", priority = -1 }
+suspicious = { level = "warn", priority = -1 }
+perf = { level = "warn", priority = -1 }
+correctness = { level = "warn", priority = -1}
+cargo = { level = "warn", priority = -1 }
+allow_attributes = { level = "forbid", priority = 0 }
+allow_attributes_without_reason = { level = "forbid", priority = 0 }
+unwrap_used = { level = "deny", priority = 0 }
 
 [profile.small]
 inherits = "release"

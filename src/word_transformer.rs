@@ -1,5 +1,3 @@
-use std::iter;
-
 use rand::prelude::*;
 
 pub fn lower(words: Vec<String>) -> Vec<String> {
@@ -15,13 +13,22 @@ pub fn upper(words: Vec<String>) -> Vec<String> {
         .collect()
 }
 pub fn capitalize_first(words: Vec<String>) -> Vec<String> {
-    words.into_iter().map(capitalize_first_char).collect()
+    words
+        .into_iter()
+        .map(|w| capitalize_first_char(&w))
+        .collect()
 }
 pub fn capitalize_last(words: Vec<String>) -> Vec<String> {
-    words.into_iter().map(capitalize_last_char).collect()
+    words
+        .into_iter()
+        .map(|w| capitalize_last_char(&w))
+        .collect()
 }
 pub fn capitalize_not_first(words: Vec<String>) -> Vec<String> {
-    words.into_iter().map(capitalize_not_first_char).collect()
+    words
+        .into_iter()
+        .map(|w| capitalize_not_first_char(&w))
+        .collect()
 }
 pub fn alternating_lower_upper(words: Vec<String>) -> Vec<String> {
     words
@@ -61,30 +68,27 @@ pub fn random_upper_lower(rng: &mut (impl Rng + ?Sized), words: Vec<String>) -> 
         })
         .collect()
 }
-fn capitalize_first_char(word: String) -> String {
+fn capitalize_first_char(word: &str) -> String {
     let first = word.chars().take(1).map(|c| c.to_ascii_uppercase());
     first.chain(word.chars().skip(1)).collect()
 }
-fn capitalize_last_char(word: String) -> String {
+fn capitalize_last_char(word: &str) -> String {
     // UTF character length weirdness reminder
     let num_chars = word.chars().count();
-    if num_chars == 0 {
-        return word;
-    };
-    // unwrap guard ^
+    let len_minus_1 = num_chars.saturating_sub(1);
     word.chars()
-        .take(num_chars - 1)
-        .chain(iter::once(
-            word.chars().last().unwrap().to_ascii_uppercase(),
-        ))
+        .take(len_minus_1)
+        .chain(
+            word.chars()
+                .skip(len_minus_1)
+                .take(1)
+                .map(|c| c.to_ascii_uppercase()),
+        )
         .collect()
 }
-fn capitalize_not_first_char(word: String) -> String {
-    if word.len() <= 1 {
-        return word;
-    }
-    // unwrap guard ^
-    iter::once(word.chars().next().unwrap())
+fn capitalize_not_first_char(word: &str) -> String {
+    word.chars()
+        .take(1)
         .chain(word.chars().skip(1).map(|c| c.to_ascii_uppercase()))
         .collect()
 }
@@ -96,47 +100,44 @@ mod tests {
 
     #[test]
     fn test_capitalize_first() {
-        assert_eq!("Foo".to_owned(), capitalize_first_char("foo".to_owned()));
+        assert_eq!("Foo".to_owned(), capitalize_first_char("foo"));
     }
 
     #[test]
     fn test_capitalize_first_empty() {
-        assert_eq!("".to_owned(), capitalize_first_char("".to_owned()));
+        assert_eq!(String::new(), capitalize_first_char(""));
     }
 
     #[test]
     fn test_capitalize_last() {
-        assert_eq!("foO".to_owned(), capitalize_last_char("foo".to_owned()));
+        assert_eq!("foO".to_owned(), capitalize_last_char("foo"));
     }
 
     #[test]
     fn test_capitalize_last_empty() {
-        assert_eq!("".to_owned(), capitalize_last_char("".to_owned()));
+        assert_eq!(String::new(), capitalize_last_char(""));
     }
 
     #[test]
     fn test_capitalize_not_first() {
-        assert_eq!(
-            "fOO".to_owned(),
-            capitalize_not_first_char("foo".to_owned())
-        );
+        assert_eq!("fOO".to_owned(), capitalize_not_first_char("foo"));
     }
 
     #[test]
     fn test_capitalize_not_first_empty() {
-        assert_eq!("".to_owned(), capitalize_not_first_char("".to_owned()));
+        assert_eq!(String::new(), capitalize_not_first_char(""));
     }
 
     #[test]
     fn test_capitalize_not_first_len_1() {
-        assert_eq!("a".to_owned(), capitalize_not_first_char("a".to_owned()));
+        assert_eq!("a".to_owned(), capitalize_not_first_char("a"));
     }
 
     #[test]
     fn test_word_transformer_lower() {
         let result = lower(make_wordlist());
         for word in result {
-            assert!(string_is_lowercase(word));
+            assert!(string_is_lowercase(&word));
         }
     }
 
@@ -144,26 +145,26 @@ mod tests {
     fn test_word_transformer_upper() {
         let result = upper(make_wordlist());
         for word in result {
-            assert!(string_is_uppercase(word));
+            assert!(string_is_uppercase(&word));
         }
     }
 
     #[test]
     fn test_word_transformer_capitalize_first() {
         let result = capitalize_first(vec!["foo".to_owned(), "bar".to_owned()]);
-        assert!(result[0] == "Foo" && result[1] == "Bar")
+        assert!(result[0] == "Foo" && result[1] == "Bar");
     }
 
     #[test]
     fn test_word_transformer_capitalize_last() {
         let result = capitalize_last(vec!["foo".to_owned(), "bar".to_owned()]);
-        assert!(result[0] == "foO" && result[1] == "baR")
+        assert!(result[0] == "foO" && result[1] == "baR");
     }
 
     #[test]
     fn test_word_transformer_capitalize_not_first() {
         let result = capitalize_not_first(vec!["foo".to_owned(), "bar".to_owned()]);
-        assert!(result[0] == "fOO" && result[1] == "bAR")
+        assert!(result[0] == "fOO" && result[1] == "bAR");
     }
 
     #[test]
@@ -175,7 +176,7 @@ mod tests {
             "bee".to_owned(),
         ];
         let result = alternating_lower_upper(sample);
-        println!("{:?}", result);
+        println!("{result:?}");
         assert_eq!(result[0], "foo");
         assert_eq!(result[1], "BAR");
         assert_eq!(result[2], "baz");
@@ -191,7 +192,7 @@ mod tests {
             "bee".to_owned(),
         ];
         let result = alternating_upper_lower(sample);
-        println!("{:?}", result);
+        println!("{result:?}");
         assert_eq!(result[0], "FOO");
         assert_eq!(result[1], "bar");
         assert_eq!(result[2], "BAZ");

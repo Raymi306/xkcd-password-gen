@@ -1,10 +1,10 @@
-use config_builder_derive::StringConfBuilder;
+use config_builder_derive::AutoConfigBuilder;
 
 use crate::consts::DEFAULT_SYMBOL_ALPHABET;
 use crate::types::PaddingType;
 use crate::types::StrIsEnumMember;
-use crate::types::WordTransformation;
 use crate::types::ValidationError;
+use crate::types::WordTransformation;
 
 #[derive(Debug)]
 pub struct Config {
@@ -13,12 +13,12 @@ pub struct Config {
     pub word_min_length: u8,
     pub word_max_length: u8,
     pub word_transformation: WordTransformation,
-    pub separator_character: Vec<char>,
     pub digits_before: u8,
     pub digits_after: u8,
     pub padding_type: PaddingType,
     pub padding_length: u8,
     pub padding_character: Vec<char>,
+    pub separator_character: Vec<char>,
 }
 
 const DEFAULT_COUNT: u8 = 2;
@@ -32,24 +32,24 @@ const DEFAULT_PADDING_TYPE: PaddingType = PaddingType::Fixed;
 const DEFAULT_PADDING_LENGTH_FIXED: u8 = 2;
 const DEFAULT_PADDING_LENGTH_ADAPTIVE: u8 = 32;
 
-#[derive(StringConfBuilder, Debug, Default)]
+#[derive(AutoConfigBuilder, Debug, Default)]
 pub struct ConfigBuilder {
     count: Option<String>,
     word_count: Option<String>,
     word_min_length: Option<String>,
     word_max_length: Option<String>,
     word_transformation: Option<String>,
-    separator_character: Option<String>,
     digits_before: Option<String>,
     digits_after: Option<String>,
     padding_type: Option<String>,
     padding_length: Option<String>,
     padding_character: Option<String>,
+    separator_character: Option<String>,
 }
 
 impl ConfigBuilder {
     pub fn new() -> Self {
-        Default::default()
+        Self::default()
     }
 
     pub fn build(self) -> Result<Config, ValidationError> {

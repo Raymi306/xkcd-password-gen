@@ -21,8 +21,7 @@ fn main() -> ExitCode {
         DEFAULT_SYMBOL_ALPHABET
             .into_iter()
             .map(String::from)
-            .collect::<Vec<String>>()
-            .join("")
+            .collect::<String>()
     );
 
     let args: Vec<String> = env::args().collect();
@@ -85,14 +84,15 @@ fn main() -> ExitCode {
     let matches_maybe = opts.parse(&args[1..]);
 
     if let Err(failure) = matches_maybe {
-        println!("{}", failure);
+        println!("{failure}");
         return ExitCode::FAILURE;
     }
 
+    #[expect(clippy::unwrap_used, reason = "error case explicitly handled above")]
     let matches = matches_maybe.unwrap();
 
     if matches.opt_present("h") || args.len() == 1 {
-        let brief = format!("Usage: {} [options]", program_name);
+        let brief = format!("Usage: {program_name} [options]");
         println!("{}", opts.usage(&brief));
         println!("types are case insensitive");
         println!("\nWORD TRANSFORMATIONS:");
@@ -126,8 +126,8 @@ fn main() -> ExitCode {
     if let Ok(config) = config_builder.build() {
         let mut maker = PasswordMaker::<ThreadRng>::new(config);
         let result = maker.create_passwords();
-        for password in result.unwrap() {
-            println!("{}", password);
+        for password in result.expect("TODO") {
+            println!("{password}");
         }
         return ExitCode::SUCCESS;
     }

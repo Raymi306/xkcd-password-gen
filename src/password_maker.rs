@@ -24,9 +24,13 @@ where
 }
 
 impl Default for PasswordMaker<ThreadRng> {
-    fn default() -> PasswordMaker<ThreadRng> {
+    fn default() -> Self {
         Self {
             rng: Box::new(ThreadRng::default()),
+            #[expect(
+                clippy::unwrap_used,
+                reason = "we control this default and it must not fail"
+            )]
             config: ConfigBuilder::new().build().unwrap(),
             wordlist: WORDLIST.iter().map(|s| String::from(*s)).collect(),
         }
@@ -37,13 +41,17 @@ impl<T> PasswordMaker<T>
 where
     T: Rng + Default,
 {
-    pub fn new(config: Config) -> PasswordMaker<T> {
+    pub fn new(config: Config) -> Self {
         Self {
             rng: Box::new(T::default()),
             config,
             wordlist: WORDLIST.iter().map(|s| String::from(*s)).collect(),
         }
     }
+    #[expect(
+        clippy::cast_possible_truncation,
+        reason = "u32 MAX is more than enough for any reasonable word list length"
+    )]
     fn filter_wordlist(&self) -> Vec<u32> {
         let min_len = self.config.word_min_length as usize;
         let max_len = self.config.word_max_length as usize;
@@ -69,11 +77,11 @@ where
             .collect();
         Ok(result)
     }
-    fn transform_words(&mut self, words: Vec<String>) -> Result<Vec<String>, String> {
+    fn transform_words(&mut self, words: Vec<String>) -> Vec<String> {
         if words.is_empty() {
-            return Ok(words);
+            return words;
         }
-        Ok(match self.config.word_transformation {
+        match self.config.word_transformation {
             WordTransformation::None => words,
             WordTransformation::Lower => word_transformer::lower(words),
             WordTransformation::Upper => word_transformer::upper(words),
@@ -89,31 +97,32 @@ where
             WordTransformation::RandomUpperLower => {
                 word_transformer::random_upper_lower(&mut self.rng, words)
             }
-        })
+        }
     }
-    fn choose_n(&mut self, n: usize, collection: &[char]) -> Option<String> {
+    fn choose_n_digits(&mut self, n: usize) -> Option<String> {
         if n == 0 {
             return None;
         }
         let mut buf = Vec::with_capacity(n);
         for _ in 0..n {
-            buf.push(collection.choose(&mut self.rng).unwrap());
+            #[expect(
+                clippy::unwrap_used,
+                reason = "as DIGIT_ALPHABET is const, it is not empty and should not provide bad size hints"
+            )]
+            buf.push(DIGIT_ALPHABET.choose(&mut self.rng).unwrap());
         }
         Some(buf.into_iter().collect())
     }
     fn create_pseudo_words(&mut self) -> (Option<String>, Option<String>) {
-        let before = self.choose_n(self.config.digits_before as usize, &DIGIT_ALPHABET);
-        let after = self.choose_n(self.config.digits_after as usize, &DIGIT_ALPHABET);
+        let before = self.choose_n_digits(self.config.digits_before as usize);
+        let after = self.choose_n_digits(self.config.digits_after as usize);
         (before, after)
     }
     fn choose_separator(&mut self) -> Option<char> {
-        Some(
-            *self
-                .config
-                .separator_character
-                .choose(&mut self.rng)
-                .unwrap(),
-        )
+        self.config
+            .separator_character
+            .choose(&mut self.rng)
+            .copied()
     }
     fn create_padding(&mut self, password: &str) -> (Option<String>, Option<String>) {
         let len = self.config.padding_length as usize;
@@ -122,7 +131,7 @@ where
             PaddingType::Fixed => (len, len),
             PaddingType::Adaptive => (0, len.saturating_sub(password.chars().count())),
         };
-        let padding_character = Some(*self.config.padding_character.choose(&mut self.rng).unwrap());
+        let padding_character = self.config.padding_character.choose(&mut self.rng);
         let before = iter::repeat(padding_character).take(before_len).collect();
         let after = iter::repeat(padding_character).take(after_len).collect();
         (before, after)
@@ -130,19 +139,19 @@ where
     fn create_password(&mut self) -> Result<String, String> {
         let filtered_word_indices = self.filter_wordlist();
         let chosen_words = self.choose_words(&filtered_word_indices)?;
-        let mut transformed_words = self.transform_words(chosen_words)?;
+        let mut transformed_words = self.transform_words(chosen_words);
         let (front_digits, back_digits) = self.create_pseudo_words();
         let separator = self.choose_separator();
-        let mut parts = vec![front_digits.unwrap_or("".to_owned())];
+        let mut parts = vec![front_digits.unwrap_or(String::new())];
         parts.append(&mut transformed_words);
-        parts.push(back_digits.unwrap_or("".to_owned()));
-        let unpadded_password = parts.join(&separator.map(String::from).unwrap_or("".to_owned()));
+        parts.push(back_digits.unwrap_or(String::new()));
+        let unpadded_password = parts.join(&separator.map(String::from).unwrap_or_default());
         let (front_padding, rear_padding) = self.create_padding(&unpadded_password);
         let final_password = format!(
             "{}{}{}",
-            front_padding.unwrap_or("".to_owned()),
+            front_padding.unwrap_or(String::new()),
             unpadded_password,
-            rear_padding.unwrap_or("".to_owned())
+            rear_padding.unwrap_or(String::new())
         );
         Ok(final_password)
     }

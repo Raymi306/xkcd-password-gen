@@ -11,15 +11,12 @@ impl fmt::Display for ValidationError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg = match self {
             Self::InvalidNumber(min, max) => {
-                format!(
-                    "Value must be a positive integer between {} and {}",
-                    min, max
-                )
+                format!("Value must be a positive integer between {min} and {max}")
             }
             Self::InvalidEnum(msg) => msg.clone(),
             Self::EmptyString => "Value must not be empty".to_owned(),
         };
-        write!(f, "{}", msg)
+        write!(f, "{msg}")
     }
 }
 

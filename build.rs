@@ -1,3 +1,4 @@
+#![allow(clippy::unwrap_used, reason = "build script panics are fine")]
 use std::env;
 use std::fs;
 use std::fs::File;

@@ -9,10 +9,10 @@ pub fn make_wordlist() -> Vec<String> {
     .collect()
 }
 
-pub fn string_is_uppercase(word: String) -> bool {
-    word.chars().all(|c| c.is_uppercase())
+pub fn string_is_uppercase(word: &str) -> bool {
+    word.chars().all(char::is_uppercase)
 }
 
-pub fn string_is_lowercase(word: String) -> bool {
-    word.chars().all(|c| c.is_lowercase())
+pub fn string_is_lowercase(word: &str) -> bool {
+    word.chars().all(char::is_lowercase)
 }
