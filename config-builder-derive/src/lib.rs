@@ -8,12 +8,18 @@ pub fn derive(input: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(input as DeriveInput);
     let struct_name = &ast.ident;
 
-    let syn::Data::Struct(syn::DataStruct { fields: syn::Fields::Named(ref fields), .. }) = ast.data else {
+    let syn::Data::Struct(syn::DataStruct {
+        fields: syn::Fields::Named(ref fields),
+        ..
+    }) = ast.data
+    else {
         panic!("{struct_name} is not a struct...")
     };
 
-    // this unwrap occurs during syntax parsing, not in generated code
-    #[allow(clippy::unwrap_used)]
+    #[expect(
+        clippy::unwrap_used,
+        reason = "this unwrap occurs during syntax parsing, not in generated code"
+    )]
     let idents: Vec<Ident> = fields
         .named
         .iter()
