@@ -26,8 +26,19 @@ impl std::error::Error for ValidationError {}
 pub trait StrIsEnumMember: Sized {
     fn to_static_str(&self) -> &'static str;
     fn into_iter() -> impl Iterator<Item = (&'static str, Self)>;
-    fn to_member(name: &str) -> Result<Self, ()>;
-
+    fn to_member(name: &str) -> Result<Self, ValidationError> {
+        Self::into_iter()
+            .find(|(s, _)| *s == name)
+            .map(|inner| inner.1)
+            .ok_or_else(|| {
+                let valid_choices = Self::into_iter()
+                    .map(|inner| inner.0)
+                    .collect::<Vec<&str>>()
+                    .join(", ");
+                let msg = format!("`{name}` is not a valid enum member. Possible members: {valid_choices}");
+                ValidationError::InvalidEnum(msg)
+            })
+    }
 }
 
 #[derive(Debug, Default)]
@@ -84,12 +95,6 @@ impl StrIsEnumMember for WordTransformation {
         ]
         .into_iter()
     }
-    fn to_member(name: &str) -> Result<Self, ()> {
-        Self::into_iter()
-            .find(|(s, _)| *s == name)
-            .map(|inner| inner.1)
-            .ok_or(())
-    }
 }
 
 impl fmt::Display for &'static WordTransformation {
@@ -122,12 +127,6 @@ impl StrIsEnumMember for PaddingType {
             (Self::Adaptive.to_static_str(), Self::Adaptive),
         ]
         .into_iter()
-    }
-    fn to_member(name: &str) -> Result<Self, ()> {
-        Self::into_iter()
-            .find(|(s, _)| *s == name)
-            .map(|inner| inner.1)
-            .ok_or(())
     }
 }
 

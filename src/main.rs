@@ -142,7 +142,7 @@ fn main() -> ExitCode {
     if let Ok(config) = config_builder.build() {
         let mut maker = PasswordMaker::<ThreadRng>::new(config);
         let result = maker.create_passwords();
-        for password in result.expect("TODO") {
+        for password in result {
             println!("{password}");
         }
         return ExitCode::SUCCESS;

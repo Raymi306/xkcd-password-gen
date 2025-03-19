@@ -59,23 +59,21 @@ where
             .wordlist
             .iter()
             .enumerate()
-            .filter(|(_, word)| word.chars().count() >= min_len && word.chars().count() <= max_len)
+            .filter(|(_, word)| (min_len..=max_len).contains(&word.chars().count()))
             .map(|(i, _)| i as u32)
             .collect();
         filtered_indices
     }
-    fn choose_words(&mut self, indices: &[u32]) -> Result<Vec<String>, String> {
-        let quantity = self.config.word_count as usize;
-        if quantity > self.wordlist.len() {
-            return Err("TODO: Insufficient items in wordlist".to_owned());
+    fn choose_words(&mut self, indices: &[u32]) -> Vec<String> {
+        let n = self.config.word_count as usize;
+        let mut buf = Vec::with_capacity(n);
+        for _ in 0..n {
+            buf.push(indices.choose(&mut self.rng).expect("size_hint on a slice iterator with no intermediary iterator adapters should always be accurate"));
         }
-        let mut selected = indices.iter().choose_multiple(&mut self.rng, quantity);
-        selected.shuffle(&mut self.rng);
-        let result = selected
+        buf
             .into_iter()
             .map(|n| self.wordlist[*n as usize].clone())
-            .collect();
-        Ok(result)
+            .collect()
     }
     fn transform_words(&mut self, words: Vec<String>) -> Vec<String> {
         if words.is_empty() {
@@ -136,9 +134,9 @@ where
         let after = iter::repeat(padding_character).take(after_len).collect();
         (before, after)
     }
-    fn create_password(&mut self) -> Result<String, String> {
+    fn create_password(&mut self) -> String {
         let filtered_word_indices = self.filter_wordlist();
-        let chosen_words = self.choose_words(&filtered_word_indices)?;
+        let chosen_words = self.choose_words(&filtered_word_indices);
         let mut transformed_words = self.transform_words(chosen_words);
         let (front_digits, back_digits) = self.create_pseudo_words();
         let separator = self.choose_separator();
@@ -153,15 +151,15 @@ where
             unpadded_password,
             rear_padding.unwrap_or(String::new())
         );
-        Ok(final_password)
+        final_password
     }
-    pub fn create_passwords(&mut self) -> Result<Vec<String>, String> {
+    pub fn create_passwords(&mut self) -> Vec<String> {
         let count = self.config.count as usize;
         let mut buf = Vec::with_capacity(count);
         for _ in 0..count {
-            buf.push(self.create_password()?);
+            buf.push(self.create_password());
         }
-        Ok(buf)
+        buf
     }
 }
 
@@ -183,40 +181,24 @@ mod password_maker_tests {
             .zip(expected.iter())
             .filter(|&(a, b)| a == b)
             .count();
-        assert_eq!(result.len(), matches);
-        assert_eq!(expected.len(), matches);
+        assert_eq!(result.len(), matches, "result.len() == matches");
+        assert_eq!(expected.len(), matches, "expected.len() == matches");
     }
 
     #[test]
     fn test_choose_words_ok() {
-        const WORD_COUNT: u8 = 2;
-
-        let mut maker = PasswordMaker::default();
-        maker.config.word_count = WORD_COUNT;
-
-        let indices: [u32; 2] = [1, 2];
-
-        let result = maker.choose_words(&indices);
-        assert_eq!(result.unwrap().len(), WORD_COUNT as usize);
+        let params = [2, 100];
+        
+        for param in params {
+            let mut maker = PasswordMaker::default();
+            maker.config.word_count = param;
+            let indices: [u32; 2] = [1, 2];
+            let result = maker.choose_words(&indices);
+            assert_eq!(result.len(), param as usize);
+        }
     }
 
     #[ignore = "not written yet"]
     #[test]
-    fn test_choose_words_result_is_shuffled() {
-        assert!(false);
-    }
-
-    #[test]
-    fn test_choose_words_err() {
-        const WORD_COUNT: u8 = 100;
-
-        let mut maker = PasswordMaker::default();
-        maker.wordlist = make_wordlist();
-        maker.config.word_count = WORD_COUNT;
-
-        let indices: [u32; 2] = [1, 2];
-
-        let result = maker.choose_words(&indices);
-        assert!(result.is_err());
-    }
+    fn test_choose_words_result_is_shuffled() {}
 }

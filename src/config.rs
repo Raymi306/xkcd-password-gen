@@ -74,8 +74,7 @@ impl ConfigBuilder {
         macro_rules! validate_enum {
             ($value:ident, $type:ty, $default:expr) => {
                 if let Some(inner) = self.$value {
-                    <$type>::to_member(&inner.to_ascii_lowercase())
-                        .map_err(|_| ValidationError::InvalidEnum("TODO".to_owned()))?
+                    <$type>::to_member(&inner.to_ascii_lowercase())?
                 } else {
                     $default
                 }
