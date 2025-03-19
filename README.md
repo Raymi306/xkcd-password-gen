@@ -16,6 +16,11 @@ I decided I wanted to write my own take on their password generator that I can c
 Wordlist courtesy of the Electronic Frontier Foundation
 - https://www.eff.org/files/2016/07/18/eff_large_wordlist.txt
 
+## Dependencies
+
+- rand = "0.9" [(github)](https://github.com/rust-random/rand)
+- getopts = "0.2" [(github)](https://github.com/rust-lang/getopts)
+
 ## TODO
 
 ### Features
