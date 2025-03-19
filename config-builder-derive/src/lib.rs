@@ -1,7 +1,5 @@
 use proc_macro::{self, TokenStream};
 
-extern crate quote;
-extern crate syn;
 use quote::quote;
 use syn::{DeriveInput, Ident, parse_macro_input};
 
