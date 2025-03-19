@@ -55,8 +55,7 @@ where
     fn filter_wordlist(&self) -> Vec<u32> {
         let min_len = self.config.word_min_length as usize;
         let max_len = self.config.word_max_length as usize;
-        self
-            .wordlist
+        self.wordlist
             .iter()
             .enumerate()
             .filter(|(_, word)| (min_len..=max_len).contains(&word.chars().count()))
