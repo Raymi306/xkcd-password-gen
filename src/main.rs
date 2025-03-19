@@ -5,8 +5,19 @@ mod test_helpers;
 mod types;
 mod word_transformer;
 
+use crate::consts::DEFAULT_COUNT;
+use crate::consts::DEFAULT_DIGITS_AFTER;
+use crate::consts::DEFAULT_DIGITS_BEFORE;
+use crate::consts::DEFAULT_PADDING_LENGTH_ADAPTIVE;
+use crate::consts::DEFAULT_PADDING_LENGTH_FIXED;
+use crate::consts::DEFAULT_PADDING_TYPE;
+use crate::consts::DEFAULT_SYMBOL_ALPHABET;
+use crate::consts::DEFAULT_WORD_COUNT;
+use crate::consts::DEFAULT_WORD_MAX_LENGTH;
+use crate::consts::DEFAULT_WORD_MIN_LENGTH;
+use crate::consts::DEFAULT_WORD_TRANSFORMATION;
 use config::ConfigBuilder;
-use consts::DEFAULT_SYMBOL_ALPHABET;
+
 use password_maker::PasswordMaker;
 
 use std::env;
@@ -29,44 +40,49 @@ fn main() -> ExitCode {
 
     let mut opts = Options::new();
     opts.optflag("h", "help", "");
-    opts.optopt("c", "count", "how many passwords to make", "NUM, default=1");
-    opts.optopt("w", "word-count", "number of words", "NUM, default=4");
+    opts.optopt(
+        "c",
+        "count",
+        "how many passwords to make",
+        &format!("NUM, default={DEFAULT_COUNT}"),
+    );
+    opts.optopt("w", "word-count", "number of words", &format!("NUM, default={DEFAULT_WORD_COUNT}"));
     opts.optopt(
         "m",
         "word-min-length",
         "minimum length of a chosen word",
-        "NUM, default=4",
+        &format!("NUM, default={DEFAULT_WORD_MIN_LENGTH}"),
     );
     opts.optopt(
         "M",
         "word-max-length",
         "maximum length of a chosen word",
-        "NUM, default=11",
+        &format!("NUM, default={DEFAULT_WORD_MAX_LENGTH}"),
     );
     opts.optopt(
         "W",
         "word-transformation",
         "transformation to apply to the selected words",
-        "TYPE, default=alternating-lower-upper",
+        &format!("TYPE, default={}", &DEFAULT_WORD_TRANSFORMATION),
     );
     opts.optopt(
         "b",
         "digits-before",
         "number of digits to prepend",
-        "NUM, default=2",
+        &format!("NUM, default={DEFAULT_DIGITS_BEFORE}"),
     );
     opts.optopt(
         "a",
         "digits-after",
         "number of digits to append",
-        "NUM, default=2",
+        &format!("NUM, default={DEFAULT_DIGITS_AFTER}"),
     );
-    opts.optopt("T", "padding-type", "how to pad", "TYPE, default=fixed");
+    opts.optopt("T", "padding-type", "how to pad", &format!("TYPE, default={}", &DEFAULT_PADDING_TYPE));
     opts.optopt(
         "l",
         "padding-length",
         "how much to pad",
-        "NUM, default=2 for fixed, 32 for adaptive",
+        &format!("NUM, default={DEFAULT_PADDING_LENGTH_FIXED} for fixed, {DEFAULT_PADDING_LENGTH_ADAPTIVE} for adaptive"),
     );
     opts.optopt(
         "p",

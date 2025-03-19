@@ -22,10 +22,12 @@ impl fmt::Display for ValidationError {
 
 impl std::error::Error for ValidationError {}
 
+// TODO make a derive macro for this
 pub trait StrIsEnumMember: Sized {
-    fn to_static_str(&'static self) -> &'static str;
+    fn to_static_str(&self) -> &'static str;
     fn into_iter() -> impl Iterator<Item = (&'static str, Self)>;
     fn to_member(name: &str) -> Result<Self, ()>;
+
 }
 
 #[derive(Debug, Default)]
@@ -43,7 +45,7 @@ pub enum WordTransformation {
 }
 
 impl StrIsEnumMember for WordTransformation {
-    fn to_static_str(&'static self) -> &'static str {
+    fn to_static_str(&self) -> &'static str {
         match self {
             Self::None => "none",
             Self::Lower => "lower",
@@ -90,6 +92,13 @@ impl StrIsEnumMember for WordTransformation {
     }
 }
 
+impl fmt::Display for &'static WordTransformation {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let msg = self.to_static_str();
+        write!(f, "{msg}")
+    }
+}
+
 #[derive(Debug, Clone, Copy, Default)]
 pub enum PaddingType {
     None,
@@ -99,7 +108,7 @@ pub enum PaddingType {
 }
 
 impl StrIsEnumMember for PaddingType {
-    fn to_static_str(&'static self) -> &'static str {
+    fn to_static_str(&self) -> &'static str {
         match self {
             Self::None => "none",
             Self::Fixed => "fixed",
@@ -119,5 +128,12 @@ impl StrIsEnumMember for PaddingType {
             .find(|(s, _)| *s == name)
             .map(|inner| inner.1)
             .ok_or(())
+    }
+}
+
+impl fmt::Display for &'static PaddingType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let msg = self.to_static_str();
+        write!(f, "{msg}")
     }
 }

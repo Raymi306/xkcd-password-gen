@@ -1,6 +1,16 @@
 use config_builder_derive::AutoConfigBuilder;
 
+use crate::consts::DEFAULT_COUNT;
+use crate::consts::DEFAULT_DIGITS_AFTER;
+use crate::consts::DEFAULT_DIGITS_BEFORE;
+use crate::consts::DEFAULT_PADDING_LENGTH_ADAPTIVE;
+use crate::consts::DEFAULT_PADDING_LENGTH_FIXED;
+use crate::consts::DEFAULT_PADDING_TYPE;
 use crate::consts::DEFAULT_SYMBOL_ALPHABET;
+use crate::consts::DEFAULT_WORD_COUNT;
+use crate::consts::DEFAULT_WORD_MAX_LENGTH;
+use crate::consts::DEFAULT_WORD_MIN_LENGTH;
+use crate::consts::DEFAULT_WORD_TRANSFORMATION;
 use crate::types::PaddingType;
 use crate::types::StrIsEnumMember;
 use crate::types::ValidationError;
@@ -20,17 +30,6 @@ pub struct Config {
     pub padding_character: Vec<char>,
     pub separator_character: Vec<char>,
 }
-
-const DEFAULT_COUNT: u8 = 2;
-const DEFAULT_WORD_COUNT: u8 = 4;
-const DEFAULT_WORD_MIN_LENGTH: u8 = 3;
-const DEFAULT_WORD_MAX_LENGTH: u8 = 11;
-const DEFAULT_WORD_TRANSFORMATION: WordTransformation = WordTransformation::AlternatingLowerUpper;
-const DEFAULT_DIGITS_BEFORE: u8 = 2;
-const DEFAULT_DIGITS_AFTER: u8 = 2;
-const DEFAULT_PADDING_TYPE: PaddingType = PaddingType::Fixed;
-const DEFAULT_PADDING_LENGTH_FIXED: u8 = 2;
-const DEFAULT_PADDING_LENGTH_ADAPTIVE: u8 = 32;
 
 #[derive(AutoConfigBuilder, Debug, Default)]
 pub struct ConfigBuilder {
@@ -52,6 +51,7 @@ impl ConfigBuilder {
         Self::default()
     }
 
+    // TODO move to derive macro?
     pub fn build(self) -> Result<Config, ValidationError> {
         macro_rules! validate_u8 {
             ($value:ident, $min:expr, $max:expr, $default:expr) => {
