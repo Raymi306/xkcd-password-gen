@@ -55,23 +55,25 @@ where
     fn filter_wordlist(&self) -> Vec<u32> {
         let min_len = self.config.word_min_length as usize;
         let max_len = self.config.word_max_length as usize;
-        let filtered_indices: Vec<u32> = self
+        self
             .wordlist
             .iter()
             .enumerate()
             .filter(|(_, word)| (min_len..=max_len).contains(&word.chars().count()))
             .map(|(i, _)| i as u32)
-            .collect();
-        filtered_indices
+            .collect()
     }
     fn choose_words(&mut self, indices: &[u32]) -> Vec<String> {
+        if indices.is_empty() {
+            return Vec::new();
+        }
         let n = self.config.word_count as usize;
         let mut buf = Vec::with_capacity(n);
         for _ in 0..n {
+            // The other invariant, choosing on an empty list, is guarded above
             buf.push(indices.choose(&mut self.rng).expect("size_hint on a slice iterator with no intermediary iterator adapters should always be accurate"));
         }
-        buf
-            .into_iter()
+        buf.into_iter()
             .map(|n| self.wordlist[*n as usize].clone())
             .collect()
     }
@@ -188,7 +190,7 @@ mod password_maker_tests {
     #[test]
     fn test_choose_words_ok() {
         let params = [2, 100];
-        
+
         for param in params {
             let mut maker = PasswordMaker::default();
             maker.config.word_count = param;

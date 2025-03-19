@@ -35,6 +35,7 @@ Wordlist courtesy of the Electronic Frontier Foundation
 - choice between ThreadRng and OSRng
 - change RNG default to OSRng
 - explore reducing binary size more in "small" profile
+- symmetrical padding option, eg `*#$[PASSWORD]$#*`
 
 ### Housekeeping
 

@@ -26,6 +26,10 @@ use std::process::ExitCode;
 use getopts::Options;
 use rand::rngs::ThreadRng;
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "As long as it is fairly simple and readable..."
+)]
 fn main() -> ExitCode {
     let default_symbol_alphabet_help: String = format!(
         "CHOICES, default=\"{}\"",
@@ -46,7 +50,12 @@ fn main() -> ExitCode {
         "how many passwords to make",
         &format!("NUM, default={DEFAULT_COUNT}"),
     );
-    opts.optopt("w", "word-count", "number of words", &format!("NUM, default={DEFAULT_WORD_COUNT}"));
+    opts.optopt(
+        "w",
+        "word-count",
+        "number of words",
+        &format!("NUM, default={DEFAULT_WORD_COUNT}"),
+    );
     opts.optopt(
         "m",
         "word-min-length",
@@ -77,7 +86,12 @@ fn main() -> ExitCode {
         "number of digits to append",
         &format!("NUM, default={DEFAULT_DIGITS_AFTER}"),
     );
-    opts.optopt("T", "padding-type", "how to pad", &format!("TYPE, default={}", &DEFAULT_PADDING_TYPE));
+    opts.optopt(
+        "T",
+        "padding-type",
+        "how to pad",
+        &format!("TYPE, default={}", &DEFAULT_PADDING_TYPE),
+    );
     opts.optopt(
         "l",
         "padding-length",
@@ -112,6 +126,7 @@ fn main() -> ExitCode {
         println!("{}", opts.usage(&brief));
         println!("types are case insensitive");
         println!("\nWORD TRANSFORMATIONS:");
+        println!("    none");
         println!("    lower                   (correct horse battery staple)");
         println!("    upper                   (CORRECT HORSE BATTERY STAPLE)");
         println!("    capitalize-first        (Correct Horse Battery Staple)");
@@ -121,6 +136,7 @@ fn main() -> ExitCode {
         println!("    alternating-upper-lower (CORRECT horse BATTERY staple)");
         println!("    random-upper-lower      (correct HORSE battery staple)");
         println!("\nPADDING TYPES:");
+        println!("    none");
         println!("    fixed    (add padding-length padding-characters to front and back)");
         println!("    adaptive (if unpadded password is less than padding-length, pad to length)");
         return ExitCode::SUCCESS;
@@ -139,13 +155,18 @@ fn main() -> ExitCode {
         .padding_character(matches.opt_str("padding-character"))
         .separator_character(matches.opt_str("separator"));
 
-    if let Ok(config) = config_builder.build() {
-        let mut maker = PasswordMaker::<ThreadRng>::new(config);
-        let result = maker.create_passwords();
-        for password in result {
-            println!("{password}");
+    match config_builder.build() {
+        Ok(config) => {
+            let mut maker = PasswordMaker::<ThreadRng>::new(config);
+            let result = maker.create_passwords();
+            for password in result {
+                println!("{password}");
+            }
+            ExitCode::SUCCESS
         }
-        return ExitCode::SUCCESS;
+        Err(e) => {
+            eprintln!("{e}");
+            ExitCode::FAILURE
+        }
     }
-    ExitCode::FAILURE
 }

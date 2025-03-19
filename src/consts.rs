@@ -6,7 +6,7 @@ pub const DEFAULT_SYMBOL_ALPHABET: [char; 18] = [
     '!', '@', '$', '%', '^', '&', '*', '-', '_', '+', '=', ':', '|', '~', '?', '/', '.', ';',
 ];
 
-pub const DEFAULT_COUNT: u8 = 2;
+pub const DEFAULT_COUNT: u8 = 1;
 pub const DEFAULT_WORD_COUNT: u8 = 4;
 pub const DEFAULT_WORD_MIN_LENGTH: u8 = 3;
 pub const DEFAULT_WORD_MAX_LENGTH: u8 = 11;

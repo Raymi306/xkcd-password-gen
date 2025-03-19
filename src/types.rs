@@ -2,19 +2,17 @@ use std::fmt;
 
 #[derive(Clone, Debug)]
 pub enum ValidationError {
-    InvalidNumber(u8, u8),
+    InvalidNumber(String, u8, u8),
     InvalidEnum(String),
-    EmptyString,
 }
 
 impl fmt::Display for ValidationError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg = match self {
-            Self::InvalidNumber(min, max) => {
-                format!("Value must be a positive integer between {min} and {max}")
+            Self::InvalidNumber(value, min, max) => {
+                format!("`{value}` must be a positive integer between {min} and {max}")
             }
             Self::InvalidEnum(msg) => msg.clone(),
-            Self::EmptyString => "Value must not be empty".to_owned(),
         };
         write!(f, "{msg}")
     }
@@ -24,18 +22,22 @@ impl std::error::Error for ValidationError {}
 
 // TODO make a derive macro for this
 pub trait StrIsEnumMember: Sized {
+    const NAME: &'static str;
     fn to_static_str(&self) -> &'static str;
     fn into_iter() -> impl Iterator<Item = (&'static str, Self)>;
-    fn to_member(name: &str) -> Result<Self, ValidationError> {
+    fn to_member(member: &str) -> Result<Self, ValidationError> {
         Self::into_iter()
-            .find(|(s, _)| *s == name)
+            .find(|(s, _)| *s == member)
             .map(|inner| inner.1)
             .ok_or_else(|| {
                 let valid_choices = Self::into_iter()
                     .map(|inner| inner.0)
                     .collect::<Vec<&str>>()
                     .join(", ");
-                let msg = format!("`{name}` is not a valid enum member. Possible members: {valid_choices}");
+                let parent = Self::NAME;
+                let msg = format!(
+                    "`{member}` is not a valid {parent}. Possible choices: {valid_choices}"
+                );
                 ValidationError::InvalidEnum(msg)
             })
     }
@@ -56,6 +58,7 @@ pub enum WordTransformation {
 }
 
 impl StrIsEnumMember for WordTransformation {
+    const NAME: &'static str = "WordTransformation";
     fn to_static_str(&self) -> &'static str {
         match self {
             Self::None => "none",
@@ -113,6 +116,7 @@ pub enum PaddingType {
 }
 
 impl StrIsEnumMember for PaddingType {
+    const NAME: &'static str = "PaddingType";
     fn to_static_str(&self) -> &'static str {
         match self {
             Self::None => "none",

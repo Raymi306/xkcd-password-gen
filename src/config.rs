@@ -56,12 +56,16 @@ impl ConfigBuilder {
         macro_rules! validate_u8 {
             ($value:ident, $min:expr, $max:expr, $default:expr) => {
                 if let Some(inner) = self.$value {
-                    let result = inner
-                        .parse::<u8>()
-                        .map_err(|_| ValidationError::InvalidNumber($min, $max))?;
+                    let result = inner.parse::<u8>().map_err(|_| {
+                        ValidationError::InvalidNumber(stringify!($value).to_owned(), $min, $max)
+                    })?;
 
                     if !($min..=$max).contains(&result) {
-                        Err(ValidationError::InvalidNumber($min, $max))
+                        Err(ValidationError::InvalidNumber(
+                            stringify!($value).to_owned(),
+                            $min,
+                            $max,
+                        ))
                     } else {
                         Ok(result)
                     }?
@@ -84,16 +88,13 @@ impl ConfigBuilder {
         macro_rules! unique_chars {
             ($value:ident, $default:ident) => {
                 if let Some(inner) = self.$value {
-                    if inner.is_empty() {
-                        return Err(ValidationError::EmptyString);
-                    }
                     let mut result = inner.chars().collect::<Vec<char>>();
                     result.sort();
                     result.dedup();
-                    Ok(result)
+                    result
                 } else {
-                    Ok($default.to_vec())
-                }?
+                    $default.to_vec()
+                }
             };
         }
 
@@ -113,7 +114,12 @@ impl ConfigBuilder {
         );
         let digits_before = validate_u8!(digits_before, 0, 255, DEFAULT_DIGITS_BEFORE);
         let digits_after = validate_u8!(digits_after, 0, 255, DEFAULT_DIGITS_AFTER);
-        let padding_type = validate_enum!(padding_type, PaddingType, DEFAULT_PADDING_TYPE);
+        let padding_character = unique_chars!(padding_character, DEFAULT_SYMBOL_ALPHABET);
+        let padding_type = if padding_character.is_empty() {
+            PaddingType::None
+        } else {
+            validate_enum!(padding_type, PaddingType, DEFAULT_PADDING_TYPE)
+        };
         let padding_length = validate_u8!(padding_length, 0, 255, {
             match padding_type {
                 PaddingType::Fixed => DEFAULT_PADDING_LENGTH_FIXED,
@@ -121,7 +127,6 @@ impl ConfigBuilder {
                 PaddingType::None => 0,
             }
         });
-        let padding_character = unique_chars!(padding_character, DEFAULT_SYMBOL_ALPHABET);
         let separator_character = unique_chars!(separator_character, DEFAULT_SYMBOL_ALPHABET);
 
         Ok(Config {
