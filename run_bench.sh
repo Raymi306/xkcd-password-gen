@@ -13,15 +13,19 @@ SHORTCOMMIT="$(git rev-parse --short HEAD)"
 cargo build --profile release
 cargo build --profile small
 
-hyperfine --export-markdown benchmarks/hyperfine_$SHORTCOMMIT.md --warmup 3 'target/release/xkcd-password-gen -c 255 > /dev/null' 'target/small/xkcd-password-gen -c 255 > /dev/null'
+TMPFILE="$(basename $0)".md
+hyperfine --export-markdown $TMPFILE --warmup 3 'target/release/xkcd-password-gen -c 255 > /dev/null' 'target/small/xkcd-password-gen -c 255 > /dev/null'
 
 echo "# Benchmarks - [$SHORTCOMMIT](https://github.com/Raymi306/xkcd-password-gen/tree/$COMMIT)\n" > benchmarks/README.md
 echo "## hyperfine\n" >> benchmarks/README.md
 
-cat benchmarks/hyperfine_$SHORTCOMMIT.md >> benchmarks/README.md
+cat run_bench_tmp.md >> benchmarks/README.md
+rm $TMPFILE
 
 echo "\n## Binary Sizes\n" >> benchmarks/README.md
 echo "- $(stat -c %s target/release/xkcd-password-gen | numfmt --to=iec) release" >> benchmarks/README.md
 echo "- $(stat -c %s target/small/xkcd-password-gen | numfmt --to=iec) small" >> benchmarks/README.md
 echo "\n## Wordlist Sizes\n" >> benchmarks/README.md
 echo "- $(stat -c %s wordlists/eff_large_wordlist.txt | numfmt --to=iec) eff_large_wordlist.txt" >> benchmarks/README.md
+
+cp benchmarks/README.md benchmarks/$SHORTCOMMIT.md
