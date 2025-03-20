@@ -114,7 +114,7 @@ fn main() -> ExitCode {
     opts.optopt(
         "r",
         "rng",
-        "Method of random number generation",
+        "method of random number generation",
         &format!("TYPE, default={}", &RngType::default()),
     );
 
@@ -147,8 +147,8 @@ fn main() -> ExitCode {
         println!("    fixed    (add padding-length padding-characters to front and back)");
         println!("    adaptive (if unpadded password is less than padding-length, pad to length)");
         println!("\nRNG TYPES:");
-        println!("    osrng  (The system's native secure RNG)");
-        println!("    csprng (A reasonably secure userspace RNG)");
+        println!("    osrng  (the system's native secure RNG)");
+        println!("    csprng (a reasonably secure userspace RNG)");
         return ExitCode::SUCCESS;
     }
 

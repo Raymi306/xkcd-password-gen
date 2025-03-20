@@ -30,11 +30,11 @@ Wordlist courtesy of the Electronic Frontier Foundation
 - statistics (entropy)
 - custom wordlists
 - feature flag to not include default wordlist
-- gui
+- gui feature flag
 - long help or manpage
-- choice between ThreadRng and OSRng
 - explore reducing binary size more in "small" profile
 - symmetrical padding option, eg `*#$[PASSWORD]$#*`
+- additional CSPRNG options under feature flags?
 
 ### Housekeeping
 
@@ -68,7 +68,7 @@ Options:
                         how many passwords to make
     -w, --word-count NUM, default=4
                         number of words
-    -m, --word-min-length NUM, default=4
+    -m, --word-min-length NUM, default=3
                         minimum length of a chosen word
     -M, --word-max-length NUM, default=11
                         maximum length of a chosen word
@@ -86,6 +86,8 @@ Options:
                         list of characters to choose from
     -s, --separator CHOICES, default="!@$%^&*-_+=:|~?/.;"
                         list of characters to choose from
+    -r, --rng TYPE, default=osrng
+                        method of random number generation
 
 types are case insensitive
 
@@ -104,6 +106,10 @@ PADDING TYPES:
     none
     fixed    (add padding-length padding-characters to front and back)
     adaptive (if unpadded password is less than padding-length, pad to length)
+
+RNG TYPES:
+    osrng  (the system's native secure RNG)
+    csprng (a reasonably secure userspace RNG)
 ```
 
 ```
