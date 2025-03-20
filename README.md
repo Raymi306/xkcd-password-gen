@@ -82,7 +82,7 @@ Options:
                         number of digits to append
     -T, --padding-type TYPE, default=fixed
                         how to pad
-    -l, --padding-length NUM, default=2
+    -l, --padding-length NUM, default=2 for fixed, 42 for adaptive
                         how much to pad
     -p, --padding-character CHOICES, default="!@$%^&*-_+=:|~?/.;"
                         list of characters to choose from
