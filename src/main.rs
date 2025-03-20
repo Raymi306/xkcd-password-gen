@@ -121,7 +121,7 @@ fn main() -> ExitCode {
     #[expect(clippy::unwrap_used, reason = "error case explicitly handled above")]
     let matches = matches_maybe.unwrap();
 
-    if matches.opt_present("h") || args.len() == 1 {
+    if matches.opt_present("h") || args.len() == 1 || !matches.free.is_empty() {
         let brief = format!("Usage: {program_name} [options]");
         println!("{}", opts.usage(&brief));
         println!("types are case insensitive");
