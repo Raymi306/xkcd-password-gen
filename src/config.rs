@@ -5,16 +5,15 @@ use crate::consts::DEFAULT_DIGITS_AFTER;
 use crate::consts::DEFAULT_DIGITS_BEFORE;
 use crate::consts::DEFAULT_PADDING_LENGTH_ADAPTIVE;
 use crate::consts::DEFAULT_PADDING_LENGTH_FIXED;
-use crate::consts::DEFAULT_PADDING_TYPE;
 use crate::consts::DEFAULT_SYMBOL_ALPHABET;
 use crate::consts::DEFAULT_WORD_COUNT;
 use crate::consts::DEFAULT_WORD_MAX_LENGTH;
 use crate::consts::DEFAULT_WORD_MIN_LENGTH;
-use crate::consts::DEFAULT_WORD_TRANSFORMATION;
 use crate::types::PaddingType;
+use crate::types::RngType;
 use crate::types::StrIsEnumMember;
 use crate::types::ValidationError;
-use crate::types::WordTransformation;
+use crate::types::WordTransformationType;
 
 #[derive(Debug)]
 pub struct Config {
@@ -22,13 +21,14 @@ pub struct Config {
     pub word_count: u8,
     pub word_min_length: u8,
     pub word_max_length: u8,
-    pub word_transformation: WordTransformation,
+    pub word_transformation: WordTransformationType,
     pub digits_before: u8,
     pub digits_after: u8,
     pub padding_type: PaddingType,
     pub padding_length: u8,
     pub padding_character: Vec<char>,
     pub separator_character: Vec<char>,
+    pub rng_type: RngType,
 }
 
 #[derive(AutoConfigBuilder, Debug, Default)]
@@ -44,6 +44,7 @@ pub struct ConfigBuilder {
     padding_length: Option<String>,
     padding_character: Option<String>,
     separator_character: Option<String>,
+    rng_type: Option<String>,
 }
 
 impl ConfigBuilder {
@@ -72,11 +73,11 @@ impl ConfigBuilder {
         }
 
         macro_rules! validate_enum {
-            ($value:ident, $type:ty, $default:expr) => {
+            ($value:ident, $type:ty) => {
                 if let Some(inner) = self.$value {
                     <$type>::to_member(&inner.to_ascii_lowercase())?
                 } else {
-                    $default
+                    <$type>::default()
                 }
             };
         }
@@ -103,18 +104,20 @@ impl ConfigBuilder {
             255,
             DEFAULT_WORD_MAX_LENGTH
         );
+        /*
         let word_transformation = validate_enum!(
             word_transformation,
-            WordTransformation,
-            DEFAULT_WORD_TRANSFORMATION
+            WordTransformationType,
         );
+        */
+        let word_transformation = WordTransformationType::None;
         let digits_before = validate_u8!(digits_before, 0, 255, DEFAULT_DIGITS_BEFORE);
         let digits_after = validate_u8!(digits_after, 0, 255, DEFAULT_DIGITS_AFTER);
         let padding_character = unique_chars!(padding_character, DEFAULT_SYMBOL_ALPHABET);
         let padding_type = if padding_character.is_empty() {
             PaddingType::None
         } else {
-            validate_enum!(padding_type, PaddingType, DEFAULT_PADDING_TYPE)
+            validate_enum!(padding_type, PaddingType)
         };
         let padding_length = validate_u8!(padding_length, 0, 255, {
             match padding_type {
@@ -124,6 +127,7 @@ impl ConfigBuilder {
             }
         });
         let separator_character = unique_chars!(separator_character, DEFAULT_SYMBOL_ALPHABET);
+        let rng_type = validate_enum!(rng_type, RngType);
 
         Ok(Config {
             count,
@@ -137,6 +141,7 @@ impl ConfigBuilder {
             padding_length,
             padding_character,
             separator_character,
+            rng_type,
         })
     }
 }

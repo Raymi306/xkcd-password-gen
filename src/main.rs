@@ -2,9 +2,7 @@ use std::env;
 use std::process::ExitCode;
 
 use getopts::Options;
-#[cfg(feature = "osrng")]
 use rand::rngs::OsRng;
-#[cfg(feature = "csprng")]
 use rand::rngs::ThreadRng;
 
 mod config;
@@ -20,13 +18,14 @@ use consts::DEFAULT_DIGITS_AFTER;
 use consts::DEFAULT_DIGITS_BEFORE;
 use consts::DEFAULT_PADDING_LENGTH_ADAPTIVE;
 use consts::DEFAULT_PADDING_LENGTH_FIXED;
-use consts::DEFAULT_PADDING_TYPE;
 use consts::DEFAULT_SYMBOL_ALPHABET;
 use consts::DEFAULT_WORD_COUNT;
 use consts::DEFAULT_WORD_MAX_LENGTH;
 use consts::DEFAULT_WORD_MIN_LENGTH;
-use consts::DEFAULT_WORD_TRANSFORMATION;
 use password_maker::PasswordMaker;
+use types::PaddingType;
+use types::RngType;
+use types::WordTransformationType;
 
 #[expect(
     clippy::too_many_lines,
@@ -74,7 +73,7 @@ fn main() -> ExitCode {
         "W",
         "word-transformation",
         "transformation to apply to the selected words",
-        &format!("TYPE, default={}", &DEFAULT_WORD_TRANSFORMATION),
+        &format!("TYPE, default={}", &WordTransformationType::default()),
     );
     opts.optopt(
         "b",
@@ -92,7 +91,7 @@ fn main() -> ExitCode {
         "T",
         "padding-type",
         "how to pad",
-        &format!("TYPE, default={}", &DEFAULT_PADDING_TYPE),
+        &format!("TYPE, default={}", &PaddingType::default()),
     );
     opts.optopt(
         "l",
@@ -111,6 +110,12 @@ fn main() -> ExitCode {
         "separator",
         "list of characters to choose from",
         &default_symbol_alphabet_help,
+    );
+    opts.optopt(
+        "r",
+        "rng",
+        "Method of random number generation",
+        &format!("TYPE, default={}", &RngType::default()),
     );
 
     let matches_maybe = opts.parse(&args[1..]);
@@ -141,6 +146,9 @@ fn main() -> ExitCode {
         println!("    none");
         println!("    fixed    (add padding-length padding-characters to front and back)");
         println!("    adaptive (if unpadded password is less than padding-length, pad to length)");
+        println!("\nRNG TYPES:");
+        println!("    osrng  (The system's native secure RNG)");
+        println!("    csprng (A reasonably secure userspace RNG)");
         return ExitCode::SUCCESS;
     }
 
@@ -155,20 +163,15 @@ fn main() -> ExitCode {
         .padding_type(matches.opt_str("padding-type"))
         .padding_length(matches.opt_str("padding-length"))
         .padding_character(matches.opt_str("padding-character"))
-        .separator_character(matches.opt_str("separator"));
+        .separator_character(matches.opt_str("separator"))
+        .rng_type(matches.opt_str("rng"));
 
     match config_builder.build() {
         Ok(config) => {
-            #[cfg(all(feature = "csprng", feature = "osrng"))]
-            compile_error!("csprng and osrng features are mutually exclusive");
-            #[cfg(feature = "csprng")]
-            type RngType = ThreadRng;
-            #[cfg(feature = "osrng")]
-            type RngType = OsRng;
-
-            let mut maker = PasswordMaker::<RngType>::new(config);
-
-            let result = maker.create_passwords();
+            let result = match config.rng_type {
+                RngType::OsRng => PasswordMaker::<OsRng>::new(config).create_passwords(),
+                RngType::Csprng => PasswordMaker::<ThreadRng>::new(config).create_passwords(),
+            };
             for password in result {
                 println!("{password}");
             }

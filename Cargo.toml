@@ -19,9 +19,6 @@ config-builder-derive = { path = "config-builder-derive" }
 quote = "1.0"
 
 [features]
-default = ["osrng"]
-osrng = []
-csprng = []
 
 [lints.rust]
 unsafe_code = { level = "deny", priority = 0 }

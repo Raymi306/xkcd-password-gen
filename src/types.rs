@@ -20,7 +20,8 @@ impl fmt::Display for ValidationError {
 
 impl std::error::Error for ValidationError {}
 
-// TODO make a derive macro for this
+// TODO make a derive macro for this.
+// Handle Display impl
 pub trait StrIsEnumMember: Sized {
     const NAME: &'static str;
     fn to_static_str(&self) -> &'static str;
@@ -44,7 +45,7 @@ pub trait StrIsEnumMember: Sized {
 }
 
 #[derive(Debug, Default)]
-pub enum WordTransformation {
+pub enum WordTransformationType {
     None,
     Lower,
     Upper,
@@ -57,8 +58,8 @@ pub enum WordTransformation {
     RandomUpperLower,
 }
 
-impl StrIsEnumMember for WordTransformation {
-    const NAME: &'static str = "WordTransformation";
+impl StrIsEnumMember for WordTransformationType {
+    const NAME: &'static str = "WordTransformationType";
     fn to_static_str(&self) -> &'static str {
         match self {
             Self::None => "none",
@@ -100,7 +101,7 @@ impl StrIsEnumMember for WordTransformation {
     }
 }
 
-impl fmt::Display for &'static WordTransformation {
+impl fmt::Display for WordTransformationType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg = self.to_static_str();
         write!(f, "{msg}")
@@ -134,7 +135,38 @@ impl StrIsEnumMember for PaddingType {
     }
 }
 
-impl fmt::Display for &'static PaddingType {
+impl fmt::Display for PaddingType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let msg = self.to_static_str();
+        write!(f, "{msg}")
+    }
+}
+
+#[derive(Debug, Clone, Copy, Default)]
+pub enum RngType {
+    #[default]
+    OsRng,
+    Csprng,
+}
+
+impl StrIsEnumMember for RngType {
+    const NAME: &'static str = "RngType";
+    fn to_static_str(&self) -> &'static str {
+        match self {
+            Self::OsRng => "osrng",
+            Self::Csprng => "csprng",
+        }
+    }
+    fn into_iter() -> impl Iterator<Item = (&'static str, Self)> {
+        [
+            (Self::OsRng.to_static_str(), Self::OsRng),
+            (Self::Csprng.to_static_str(), Self::Csprng),
+        ]
+        .into_iter()
+    }
+}
+
+impl fmt::Display for RngType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let msg = self.to_static_str();
         write!(f, "{msg}")

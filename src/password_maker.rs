@@ -12,7 +12,7 @@ use crate::config::Config;
 use crate::config::ConfigBuilder;
 use crate::consts::DIGIT_ALPHABET;
 use crate::types::PaddingType;
-use crate::types::WordTransformation;
+use crate::types::WordTransformationType;
 use crate::word_transformer;
 
 #[derive(Debug)]
@@ -39,25 +39,6 @@ where
             config: ConfigBuilder::new().build().unwrap(),
             wordlist: WORDLIST.iter().map(|s| String::from(*s)).collect(),
         }
-    }
-}
-
-pub struct PasswordMakerSeedable<T: TryRngCore>(PasswordMaker<T>);
-
-impl<T> Default for PasswordMakerSeedable<T>
-where
-    T: TryRngCore + SeedableRng,
-{
-    fn default() -> Self {
-        Self(PasswordMaker {
-            rng: T::from_os_rng().unwrap_err(),
-            #[expect(
-                clippy::unwrap_used,
-                reason = "we control this default and it must not fail"
-            )]
-            config: ConfigBuilder::new().build().unwrap(),
-            wordlist: WORDLIST.iter().map(|s| String::from(*s)).collect(),
-        })
     }
 }
 
@@ -113,19 +94,21 @@ where
             return words;
         }
         match self.config.word_transformation {
-            WordTransformation::None => words,
-            WordTransformation::Lower => word_transformer::lower(words),
-            WordTransformation::Upper => word_transformer::upper(words),
-            WordTransformation::CapitalizeFirst => word_transformer::capitalize_first(words),
-            WordTransformation::CapitalizeLast => word_transformer::capitalize_last(words),
-            WordTransformation::CapitalizeNotFirst => word_transformer::capitalize_not_first(words),
-            WordTransformation::AlternatingLowerUpper => {
+            WordTransformationType::None => words,
+            WordTransformationType::Lower => word_transformer::lower(words),
+            WordTransformationType::Upper => word_transformer::upper(words),
+            WordTransformationType::CapitalizeFirst => word_transformer::capitalize_first(words),
+            WordTransformationType::CapitalizeLast => word_transformer::capitalize_last(words),
+            WordTransformationType::CapitalizeNotFirst => {
+                word_transformer::capitalize_not_first(words)
+            }
+            WordTransformationType::AlternatingLowerUpper => {
                 word_transformer::alternating_lower_upper(words)
             }
-            WordTransformation::AlternatingUpperLower => {
+            WordTransformationType::AlternatingUpperLower => {
                 word_transformer::alternating_upper_lower(words)
             }
-            WordTransformation::RandomUpperLower => {
+            WordTransformationType::RandomUpperLower => {
                 word_transformer::random_upper_lower(&mut self.rng, words)
             }
         }
@@ -232,5 +215,5 @@ mod password_maker_tests {
 
     #[ignore = "not written yet"]
     #[test]
-    fn test_choose_words_result_is_shuffled() {}
+    const fn test_choose_words_result_is_shuffled() {}
 }
