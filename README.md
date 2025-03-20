@@ -62,7 +62,7 @@ Wordlist courtesy of the Electronic Frontier Foundation
 ## Examples ( as of [b08a313](https://github.com/Raymi306/xkcd-password-gen/tree/b08a313bfed1113cc140ebbfe9a050df7abfe8bb) )
 
 ```
-Usage: target/debug/xkcd-password-gen [options]
+Usage: xkcd-password-gen [options]
 
 Options:
     -h, --help
@@ -92,6 +92,7 @@ Options:
 types are case insensitive
 
 WORD TRANSFORMATIONS:
+    none
     lower                   (correct horse battery staple)
     upper                   (CORRECT HORSE BATTERY STAPLE)
     capitalize-first        (Correct Horse Battery Staple)
@@ -102,12 +103,13 @@ WORD TRANSFORMATIONS:
     random-upper-lower      (correct HORSE battery staple)
 
 PADDING TYPES:
+    none
     fixed    (add padding-length padding-characters to front and back)
     adaptive (if unpadded password is less than padding-length, pad to length)
 ```
 
 ```
-$ ./target/debug/xkcd-password-gen -c 3
+$ xkcd-password-gen -c 3
 ||47@amicably@JUDGE@enlarged@DECK@11||
 ~~12_satisfied_KINSHIP_purebred_ESSAY_70~~
 __24?expanse?PAYCHECK?naturist?STEADIER?08__
