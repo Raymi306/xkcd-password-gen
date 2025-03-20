@@ -104,13 +104,7 @@ impl ConfigBuilder {
             255,
             DEFAULT_WORD_MAX_LENGTH
         );
-        /*
-        let word_transformation = validate_enum!(
-            word_transformation,
-            WordTransformationType,
-        );
-        */
-        let word_transformation = WordTransformationType::None;
+        let word_transformation = validate_enum!(word_transformation, WordTransformationType);
         let digits_before = validate_u8!(digits_before, 0, 255, DEFAULT_DIGITS_BEFORE);
         let digits_after = validate_u8!(digits_after, 0, 255, DEFAULT_DIGITS_AFTER);
         let padding_character = unique_chars!(padding_character, DEFAULT_SYMBOL_ALPHABET);
