@@ -47,10 +47,6 @@ pub struct ConfigBuilder {
 }
 
 impl ConfigBuilder {
-    pub fn new() -> Self {
-        Self::default()
-    }
-
     // TODO move to derive macro?
     pub fn build(self) -> Result<Config, ValidationError> {
         macro_rules! validate_u8 {

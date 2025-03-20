@@ -1,3 +1,12 @@
+use std::env;
+use std::process::ExitCode;
+
+use getopts::Options;
+#[cfg(feature="csprng")]
+use rand::rngs::ThreadRng;
+#[cfg(feature="osrng")]
+use rand::rngs::OsRng;
+
 mod config;
 mod consts;
 mod password_maker;
@@ -5,26 +14,19 @@ mod test_helpers;
 mod types;
 mod word_transformer;
 
-use crate::consts::DEFAULT_COUNT;
-use crate::consts::DEFAULT_DIGITS_AFTER;
-use crate::consts::DEFAULT_DIGITS_BEFORE;
-use crate::consts::DEFAULT_PADDING_LENGTH_ADAPTIVE;
-use crate::consts::DEFAULT_PADDING_LENGTH_FIXED;
-use crate::consts::DEFAULT_PADDING_TYPE;
-use crate::consts::DEFAULT_SYMBOL_ALPHABET;
-use crate::consts::DEFAULT_WORD_COUNT;
-use crate::consts::DEFAULT_WORD_MAX_LENGTH;
-use crate::consts::DEFAULT_WORD_MIN_LENGTH;
-use crate::consts::DEFAULT_WORD_TRANSFORMATION;
 use config::ConfigBuilder;
-
+use consts::DEFAULT_COUNT;
+use consts::DEFAULT_DIGITS_AFTER;
+use consts::DEFAULT_DIGITS_BEFORE;
+use consts::DEFAULT_PADDING_LENGTH_ADAPTIVE;
+use consts::DEFAULT_PADDING_LENGTH_FIXED;
+use consts::DEFAULT_PADDING_TYPE;
+use consts::DEFAULT_SYMBOL_ALPHABET;
+use consts::DEFAULT_WORD_COUNT;
+use consts::DEFAULT_WORD_MAX_LENGTH;
+use consts::DEFAULT_WORD_MIN_LENGTH;
+use consts::DEFAULT_WORD_TRANSFORMATION;
 use password_maker::PasswordMaker;
-
-use std::env;
-use std::process::ExitCode;
-
-use getopts::Options;
-use rand::rngs::ThreadRng;
 
 #[expect(
     clippy::too_many_lines,
@@ -157,7 +159,15 @@ fn main() -> ExitCode {
 
     match config_builder.build() {
         Ok(config) => {
-            let mut maker = PasswordMaker::<ThreadRng>::new(config);
+            #[cfg(all(feature="csprng", feature="osrng"))]
+            compile_error!("csprng and osrng features are mutually exclusive");
+            #[cfg(feature="csprng")]
+            type RngType = ThreadRng;
+            #[cfg(feature="osrng")]
+            type RngType = OsRng;
+
+            let mut maker = PasswordMaker::<RngType>::new(config);
+
             let result = maker.create_passwords();
             for password in result {
                 println!("{password}");

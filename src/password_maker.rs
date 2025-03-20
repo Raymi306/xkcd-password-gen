@@ -5,6 +5,8 @@ include!(concat!(env!("OUT_DIR"), "/wordlist.rs"));
 use std::iter;
 
 use rand::prelude::*;
+use rand::TryRngCore;
+use rand_core::UnwrapErr;
 
 use crate::config::Config;
 use crate::config::ConfigBuilder;
@@ -15,18 +17,19 @@ use crate::word_transformer;
 
 #[derive(Debug)]
 pub struct PasswordMaker<T>
-where
-    T: Rng + Default,
+where T: TryRngCore,
 {
-    rng: Box<T>,
-    config: Config,
-    wordlist: Vec<String>,
+    pub rng: UnwrapErr<T>,
+    pub config: Config,
+    pub wordlist: Vec<String>,
 }
 
-impl Default for PasswordMaker<ThreadRng> {
+impl<T> Default for PasswordMaker<T>
+where T: TryRngCore + Default,
+{
     fn default() -> Self {
         Self {
-            rng: Box::new(ThreadRng::default()),
+            rng: T::default().unwrap_err(),
             #[expect(
                 clippy::unwrap_used,
                 reason = "we control this default and it must not fail"
@@ -37,17 +40,38 @@ impl Default for PasswordMaker<ThreadRng> {
     }
 }
 
+pub struct PasswordMakerSeedable<T: TryRngCore>(PasswordMaker<T>);
+
+impl<T> Default for PasswordMakerSeedable<T>
+where T: TryRngCore + SeedableRng {
+    fn default() -> Self {
+        Self ( PasswordMaker {
+            rng: T::from_os_rng().unwrap_err(),
+            #[expect(
+                clippy::unwrap_used,
+                reason = "we control this default and it must not fail"
+            )]
+            config: ConfigBuilder::new().build().unwrap(),
+            wordlist: WORDLIST.iter().map(|s| String::from(*s)).collect(),
+        })
+    }
+}
+
 impl<T> PasswordMaker<T>
 where
-    T: Rng + Default,
+    T: TryRngCore + Default,
 {
     pub fn new(config: Config) -> Self {
         Self {
-            rng: Box::new(T::default()),
+            rng: T::default().unwrap_err(),
             config,
             wordlist: WORDLIST.iter().map(|s| String::from(*s)).collect(),
         }
     }
+}
+impl<T> PasswordMaker<T>
+where T: TryRngCore,
+{
     #[expect(
         clippy::cast_possible_truncation,
         reason = "u32 MAX is more than enough for any reasonable word list length"
@@ -69,8 +93,13 @@ where
         let n = self.config.word_count as usize;
         let mut buf = Vec::with_capacity(n);
         for _ in 0..n {
-            // The other invariant, choosing on an empty list, is guarded above
-            buf.push(indices.choose(&mut self.rng).expect("size_hint on a slice iterator with no intermediary iterator adapters should always be accurate"));
+            buf.push(indices.choose(&mut self.rng).expect(
+                concat!(
+                    "invariant 1: `indices` must not be empty and should have been guarded above.",
+                    "invariant 2: size_hint on a slice iterator with no intermediary ",
+                    "iterator adapters should always be accurate.\n",
+                )
+            ));
         }
         buf.into_iter()
             .map(|n| self.wordlist[*n as usize].clone())
@@ -166,12 +195,11 @@ where
 
 #[cfg(test)]
 mod password_maker_tests {
-    use super::*;
     use crate::test_helpers::*;
 
     #[test]
     fn test_filter_wordlist() {
-        let mut maker = PasswordMaker::default();
+        let mut maker = make_seeded_maker(1);
         maker.wordlist = make_wordlist();
         maker.config.word_min_length = 4;
         maker.config.word_max_length = 4;
@@ -191,7 +219,7 @@ mod password_maker_tests {
         let params = [2, 100];
 
         for param in params {
-            let mut maker = PasswordMaker::default();
+            let mut maker = make_seeded_maker(1);
             maker.config.word_count = param;
             let indices: [u32; 2] = [1, 2];
             let result = maker.choose_words(&indices);

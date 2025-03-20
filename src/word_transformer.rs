@@ -96,6 +96,7 @@ fn capitalize_not_first_char(word: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rand::rngs::SmallRng;
     use crate::test_helpers::*;
 
     #[test]
@@ -202,7 +203,7 @@ mod tests {
     #[ignore = "needs random seeding"]
     #[test]
     fn test_word_transformer_random() {
-        let mut rng = ThreadRng::default();
+        let mut rng = SmallRng::seed_from_u64(1);
         random_upper_lower(&mut rng, vec!["hello".to_owned(), "world".to_owned()]);
     }
 }

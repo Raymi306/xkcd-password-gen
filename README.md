@@ -33,7 +33,6 @@ Wordlist courtesy of the Electronic Frontier Foundation
 - gui
 - long help or manpage
 - choice between ThreadRng and OSRng
-- change RNG default to OSRng
 - explore reducing binary size more in "small" profile
 - symmetrical padding option, eg `*#$[PASSWORD]$#*`
 
@@ -43,10 +42,9 @@ Wordlist courtesy of the Electronic Frontier Foundation
 - more automated tests
 - CI
 - releases w/ signed binaries
-- license
 - logging?
 - macros
-- start updating version
+- start updating Cargo.toml version fields
 
 ## Checklist Before Release
 

@@ -7,15 +7,21 @@ description = "A memorable password generator inspired by XKCD 936"
 repository = "https://github.com/Raymi306/xkcd-password-gen"
 categories = ["command-line-utilities"]
 keywords = ["xkcd", "password"]
-license = "TODO"
+license-file = "LICENSE"
 
 [dependencies]
 rand = "0.9"
+rand_core = "0.9"
 getopts = "0.2"
 config-builder-derive = { path = "config-builder-derive" }
 
 [build-dependencies]
 quote = "1.0"
+
+[features]
+default = ["osrng"]
+osrng = []
+csprng = []
 
 [lints.rust]
 unsafe_code = { level = "deny", priority = 0 }
