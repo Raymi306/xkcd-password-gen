@@ -13,13 +13,13 @@ SHORTCOMMIT="$(git rev-parse --short HEAD)"
 cargo build --profile release
 cargo build --profile small
 
-TMPFILE="$(basename $0)".md
+TMPFILE="$(basename $0)".md.tmp
 hyperfine --export-markdown $TMPFILE --warmup 3 'target/release/xkcd-password-gen -c 255 > /dev/null' 'target/small/xkcd-password-gen -c 255 > /dev/null'
 
 echo "# Benchmarks - [$SHORTCOMMIT](https://github.com/Raymi306/xkcd-password-gen/tree/$COMMIT)\n" > benchmarks/README.md
 echo "## hyperfine\n" >> benchmarks/README.md
 
-cat run_bench_tmp.md >> benchmarks/README.md
+cat $TMPFILE >> benchmarks/README.md
 rm $TMPFILE
 
 echo "\n## Binary Sizes\n" >> benchmarks/README.md
