@@ -2,10 +2,10 @@ use std::env;
 use std::process::ExitCode;
 
 use getopts::Options;
-#[cfg(feature="csprng")]
-use rand::rngs::ThreadRng;
-#[cfg(feature="osrng")]
+#[cfg(feature = "osrng")]
 use rand::rngs::OsRng;
+#[cfg(feature = "csprng")]
+use rand::rngs::ThreadRng;
 
 mod config;
 mod consts;
@@ -159,11 +159,11 @@ fn main() -> ExitCode {
 
     match config_builder.build() {
         Ok(config) => {
-            #[cfg(all(feature="csprng", feature="osrng"))]
+            #[cfg(all(feature = "csprng", feature = "osrng"))]
             compile_error!("csprng and osrng features are mutually exclusive");
-            #[cfg(feature="csprng")]
+            #[cfg(feature = "csprng")]
             type RngType = ThreadRng;
-            #[cfg(feature="osrng")]
+            #[cfg(feature = "osrng")]
             type RngType = OsRng;
 
             let mut maker = PasswordMaker::<RngType>::new(config);

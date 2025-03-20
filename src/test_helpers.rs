@@ -4,9 +4,9 @@
 // static WORDLIST: &[&str] = &[...]
 include!(concat!(env!("OUT_DIR"), "/wordlist.rs"));
 
-use rand::rngs::SmallRng;
 use rand::SeedableRng;
 use rand::TryRngCore;
+use rand::rngs::SmallRng;
 
 use crate::config::ConfigBuilder;
 use crate::password_maker::PasswordMaker;

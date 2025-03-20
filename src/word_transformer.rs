@@ -96,8 +96,8 @@ fn capitalize_not_first_char(word: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rand::rngs::SmallRng;
     use crate::test_helpers::*;
+    use rand::rngs::SmallRng;
 
     #[test]
     fn test_capitalize_first() {

@@ -4,8 +4,8 @@ include!(concat!(env!("OUT_DIR"), "/wordlist.rs"));
 
 use std::iter;
 
-use rand::prelude::*;
 use rand::TryRngCore;
+use rand::prelude::*;
 use rand_core::UnwrapErr;
 
 use crate::config::Config;
@@ -17,7 +17,8 @@ use crate::word_transformer;
 
 #[derive(Debug)]
 pub struct PasswordMaker<T>
-where T: TryRngCore,
+where
+    T: TryRngCore,
 {
     pub rng: UnwrapErr<T>,
     pub config: Config,
@@ -25,7 +26,8 @@ where T: TryRngCore,
 }
 
 impl<T> Default for PasswordMaker<T>
-where T: TryRngCore + Default,
+where
+    T: TryRngCore + Default,
 {
     fn default() -> Self {
         Self {
@@ -43,9 +45,11 @@ where T: TryRngCore + Default,
 pub struct PasswordMakerSeedable<T: TryRngCore>(PasswordMaker<T>);
 
 impl<T> Default for PasswordMakerSeedable<T>
-where T: TryRngCore + SeedableRng {
+where
+    T: TryRngCore + SeedableRng,
+{
     fn default() -> Self {
-        Self ( PasswordMaker {
+        Self(PasswordMaker {
             rng: T::from_os_rng().unwrap_err(),
             #[expect(
                 clippy::unwrap_used,
@@ -70,7 +74,8 @@ where
     }
 }
 impl<T> PasswordMaker<T>
-where T: TryRngCore,
+where
+    T: TryRngCore,
 {
     #[expect(
         clippy::cast_possible_truncation,
@@ -93,13 +98,11 @@ where T: TryRngCore,
         let n = self.config.word_count as usize;
         let mut buf = Vec::with_capacity(n);
         for _ in 0..n {
-            buf.push(indices.choose(&mut self.rng).expect(
-                concat!(
-                    "invariant 1: `indices` must not be empty and should have been guarded above.",
-                    "invariant 2: size_hint on a slice iterator with no intermediary ",
-                    "iterator adapters should always be accurate.\n",
-                )
-            ));
+            buf.push(indices.choose(&mut self.rng).expect(concat!(
+                "invariant 1: `indices` must not be empty and should have been guarded above.",
+                "invariant 2: size_hint on a slice iterator with no intermediary ",
+                "iterator adapters should always be accurate.\n",
+            )));
         }
         buf.into_iter()
             .map(|n| self.wordlist[*n as usize].clone())
