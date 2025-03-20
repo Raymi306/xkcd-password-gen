@@ -114,7 +114,7 @@ fn main() -> ExitCode {
     let matches_maybe = opts.parse(&args[1..]);
 
     if let Err(failure) = matches_maybe {
-        println!("{failure}");
+        eprintln!("{failure}");
         return ExitCode::FAILURE;
     }
 

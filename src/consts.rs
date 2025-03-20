@@ -16,4 +16,4 @@ pub const DEFAULT_DIGITS_BEFORE: u8 = 2;
 pub const DEFAULT_DIGITS_AFTER: u8 = 2;
 pub const DEFAULT_PADDING_TYPE: PaddingType = PaddingType::Fixed;
 pub const DEFAULT_PADDING_LENGTH_FIXED: u8 = 2;
-pub const DEFAULT_PADDING_LENGTH_ADAPTIVE: u8 = 32;
+pub const DEFAULT_PADDING_LENGTH_ADAPTIVE: u8 = 42;
