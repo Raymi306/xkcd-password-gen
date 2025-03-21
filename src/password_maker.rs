@@ -32,12 +32,15 @@ where
     T: TryRngCore + Default,
 {
     fn default() -> Self {
-        #[expect(clippy::unwrap_used, reason = "we control this default and it must not fail")]
+        #[expect(
+            clippy::unwrap_used,
+            reason = "we control this default and it must not fail"
+        )]
         let config = ConfigBuilder::new().build().unwrap();
         Self {
             rng: T::default().unwrap_err(),
             wordlist: WORDLIST.iter().map(|s| String::from(*s)).collect(),
-            config
+            config,
         }
     }
 }
