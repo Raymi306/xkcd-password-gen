@@ -56,13 +56,11 @@ fn validate_int<T: Integer>(
 ) -> Result<T, ValidationError> {
     value.map_or(Ok(default), |inner| {
         let Ok(result) = inner.parse::<T>() else {
-            return Err(
-                ValidationError::InvalidNumber(
-                    inner,
-                    min.into(),
-                    max.into(),
-                )
-            );
+            return Err(ValidationError::InvalidNumber(
+                inner,
+                min.into(),
+                max.into(),
+            ));
         };
 
         if (min..=max).contains(&result) {
