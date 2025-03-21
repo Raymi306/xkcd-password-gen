@@ -1,7 +1,8 @@
 #![cfg(test)]
-
-// provides:
-// static WORDLIST: &[&str] = &[...]
+/*
+ * provides:
+ * static WORDLIST: &[&str] = &[...]
+ */
 include!(concat!(env!("OUT_DIR"), "/wordlist.rs"));
 
 use rand::SeedableRng;

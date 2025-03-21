@@ -118,15 +118,13 @@ fn main() -> ExitCode {
         &format!("TYPE, default={}", &RngType::default()),
     );
 
-    let matches_maybe = opts.parse(&args[1..]);
-
-    if let Err(failure) = matches_maybe {
-        eprintln!("{failure}");
-        return ExitCode::FAILURE;
-    }
-
-    #[expect(clippy::unwrap_used, reason = "error case explicitly handled above")]
-    let matches = matches_maybe.unwrap();
+    let matches = match opts.parse(&args[1..]) {
+        Ok(v) => v,
+        Err(failure) => {
+            eprintln!("{failure}");
+            return ExitCode::FAILURE;
+        }
+    };
 
     if matches.opt_present("h") || args.len() == 1 || !matches.free.is_empty() {
         let brief = format!("Usage: {program_name} [options]");

@@ -9,6 +9,7 @@ use crate::consts::DEFAULT_SYMBOL_ALPHABET;
 use crate::consts::DEFAULT_WORD_COUNT;
 use crate::consts::DEFAULT_WORD_MAX_LENGTH;
 use crate::consts::DEFAULT_WORD_MIN_LENGTH;
+use crate::types::Integer;
 use crate::types::PaddingType;
 use crate::types::RngType;
 use crate::types::StrEnum;
@@ -47,81 +48,102 @@ pub struct ConfigBuilder {
     rng_type: Option<String>,
 }
 
+fn validate_int<T: Integer>(
+    value: Option<String>,
+    min: T,
+    max: T,
+    default: T,
+) -> Result<T, ValidationError> {
+    value.map_or(Ok(default), |inner| {
+        /*
+         * the below would be preferable and would avoid the unsafe block,
+         * but it won't compile without cloning `inner`.
+         * if the compiler can't figure that out, not super confident about
+         * it optimizing unwrap() to unwrap_unchecked() behind the scenes.
+         * yes, this is a microoptimization that doesn't matter, but
+         * it also avoids some ugly generic bounds that `expect/unwrap` require.
+         *
+         * ```
+         * let result = inner.parse::<T>().map_err(|_| {
+         *     ValidationError::InvalidNumber(inner, min.into(), max.into())
+         * })?;
+         * ```
+         */
+        let parse_result = inner.parse::<T>();
+
+        if parse_result.is_err() {
+            return Err(ValidationError::InvalidNumber(
+                inner,
+                min.into(),
+                max.into(),
+            ));
+        }
+
+        #[expect(unsafe_code, reason = "error case explicitly handled above")]
+        let result = unsafe { parse_result.unwrap_unchecked() };
+
+        if (min..=max).contains(&result) {
+            Ok(result)
+        } else {
+            Err(ValidationError::InvalidNumber(
+                inner,
+                min.into(),
+                max.into(),
+            ))
+        }
+    })
+}
+
+fn validate_enum<T: StrEnum>(value: Option<String>) -> Result<T, ValidationError> {
+    value.map_or(Ok(T::default()), |inner| {
+        T::to_member(&inner.to_ascii_lowercase())
+    })
+}
+
+fn uniquify_chars(value: Option<String>, default: &[char]) -> Vec<char> {
+    value.map_or_else(
+        || default.to_vec(),
+        |inner| {
+            let mut result = inner.chars().collect::<Vec<char>>();
+            result.sort_unstable();
+            result.dedup();
+            result
+        },
+    )
+}
+
 impl ConfigBuilder {
-    // TODO move to derive macro?
     pub fn build(self) -> Result<Config, ValidationError> {
-        macro_rules! validate_u8 {
-            ($value:ident, $min:expr, $max:expr, $default:expr) => {
-                if let Some(inner) = self.$value {
-                    let result = inner.parse::<u8>().map_err(|_| {
-                        ValidationError::InvalidNumber(stringify!($value).to_owned(), $min, $max)
-                    })?;
-
-                    if !($min..=$max).contains(&result) {
-                        Err(ValidationError::InvalidNumber(
-                            stringify!($value).to_owned(),
-                            $min,
-                            $max,
-                        ))
-                    } else {
-                        Ok(result)
-                    }?
-                } else {
-                    $default
-                }
-            };
-        }
-
-        macro_rules! validate_enum {
-            ($value:ident, $type:ty) => {
-                if let Some(inner) = self.$value {
-                    <$type>::to_member(&inner.to_ascii_lowercase())?
-                } else {
-                    <$type>::default()
-                }
-            };
-        }
-
-        macro_rules! unique_chars {
-            ($value:ident, $default:ident) => {
-                if let Some(inner) = self.$value {
-                    let mut result = inner.chars().collect::<Vec<char>>();
-                    result.sort();
-                    result.dedup();
-                    result
-                } else {
-                    $default.to_vec()
-                }
-            };
-        }
-
-        let count = validate_u8!(count, 1, 255, DEFAULT_COUNT);
-        let word_count = validate_u8!(word_count, 0, 32, DEFAULT_WORD_COUNT);
-        let word_min_length = validate_u8!(word_min_length, 1, 255, DEFAULT_WORD_MIN_LENGTH);
-        let word_max_length = validate_u8!(
-            word_max_length,
+        let count = validate_int::<u8>(self.count, 1, 255, DEFAULT_COUNT)?;
+        let word_count = validate_int::<u8>(self.word_count, 0, 32, DEFAULT_WORD_COUNT)?;
+        let word_min_length =
+            validate_int::<u8>(self.word_min_length, 1, 255, DEFAULT_WORD_MIN_LENGTH)?;
+        let word_max_length = validate_int::<u8>(
+            self.word_max_length,
             word_min_length,
             255,
-            DEFAULT_WORD_MAX_LENGTH
-        );
-        let word_transformation = validate_enum!(word_transformation, WordTransformationType);
-        let digits_before = validate_u8!(digits_before, 0, 255, DEFAULT_DIGITS_BEFORE);
-        let digits_after = validate_u8!(digits_after, 0, 255, DEFAULT_DIGITS_AFTER);
-        let padding_character = unique_chars!(padding_character, DEFAULT_SYMBOL_ALPHABET);
+            DEFAULT_WORD_MAX_LENGTH,
+        )?;
+        let word_transformation =
+            validate_enum::<WordTransformationType>(self.word_transformation)?;
+        let digits_before = validate_int::<u8>(self.digits_before, 0, 255, DEFAULT_DIGITS_BEFORE)?;
+        let digits_after = validate_int::<u8>(self.digits_after, 0, 255, DEFAULT_DIGITS_AFTER)?;
+        let padding_character = uniquify_chars(self.padding_character, &DEFAULT_SYMBOL_ALPHABET);
         let padding_type = if padding_character.is_empty() {
             PaddingType::None
         } else {
-            validate_enum!(padding_type, PaddingType)
+            validate_enum::<PaddingType>(self.padding_type)?
         };
-        let padding_length = validate_u8!(padding_length, 0, 255, {
+        let padding_length = validate_int::<u8>(self.padding_length, 0, 255, {
             match padding_type {
                 PaddingType::Fixed => DEFAULT_PADDING_LENGTH_FIXED,
                 PaddingType::Adaptive => DEFAULT_PADDING_LENGTH_ADAPTIVE,
                 PaddingType::None => 0,
             }
-        });
-        let separator_character = unique_chars!(separator_character, DEFAULT_SYMBOL_ALPHABET);
-        let rng_type = validate_enum!(rng_type, RngType);
+        })?;
+        let separator_character =
+            uniquify_chars(self.separator_character, &DEFAULT_SYMBOL_ALPHABET);
+        let rng_type = validate_enum::<RngType>(self.rng_type)?;
 
         Ok(Config {
             count,

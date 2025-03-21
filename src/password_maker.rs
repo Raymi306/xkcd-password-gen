@@ -1,5 +1,7 @@
-// provides:
-// static WORDLIST: &[&str] = &[...]
+/*
+ * provides:
+ * static WORDLIST: &[&str] = &[...]
+ */
 include!(concat!(env!("OUT_DIR"), "/wordlist.rs"));
 
 use std::iter;
@@ -30,14 +32,12 @@ where
     T: TryRngCore + Default,
 {
     fn default() -> Self {
+        #[expect(clippy::unwrap_used, reason = "we control this default and it must not fail")]
+        let config = ConfigBuilder::new().build().unwrap();
         Self {
             rng: T::default().unwrap_err(),
-            #[expect(
-                clippy::unwrap_used,
-                reason = "we control this default and it must not fail"
-            )]
-            config: ConfigBuilder::new().build().unwrap(),
             wordlist: WORDLIST.iter().map(|s| String::from(*s)).collect(),
+            config
         }
     }
 }

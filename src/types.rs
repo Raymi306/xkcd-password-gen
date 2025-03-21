@@ -2,9 +2,24 @@ use std::fmt;
 
 use strenum_derive::AutoStrEnum;
 
+type MinimalSupportedInteger = u8;
+
+pub trait Integer:
+    std::fmt::Debug + std::str::FromStr + Into<MinimalSupportedInteger> + PartialOrd + Copy
+{
+}
+
+// to support more builtin integer types, just add below with specific types
+// and change MinimalSupportedInteger
+// eg.
+//     impl Integer for u8
+//     type MinimalSupportedInteger = u16
+impl Integer for MinimalSupportedInteger {}
+
 #[derive(Clone, Debug)]
 pub enum ValidationError {
-    InvalidNumber(String, u8, u8),
+    // to support numbers larger or smaller than T<u8>, change u8
+    InvalidNumber(String, MinimalSupportedInteger, MinimalSupportedInteger),
     InvalidEnum(String),
 }
 
@@ -22,7 +37,7 @@ impl fmt::Display for ValidationError {
 
 impl std::error::Error for ValidationError {}
 
-pub trait StrEnum: Sized {
+pub trait StrEnum: Sized + Default {
     const NAME: &'static str;
     fn to_static_str(&self) -> &'static str;
     fn into_iter() -> impl Iterator<Item = (&'static str, Self)>;
