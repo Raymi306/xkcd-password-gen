@@ -55,32 +55,15 @@ fn validate_int<T: Integer>(
     default: T,
 ) -> Result<T, ValidationError> {
     value.map_or(Ok(default), |inner| {
-        /*
-         * the below would be preferable and would avoid the unsafe block,
-         * but it won't compile without cloning `inner`.
-         * if the compiler can't figure that out, not super confident about
-         * it optimizing unwrap() to unwrap_unchecked() behind the scenes.
-         * yes, this is a microoptimization that doesn't matter, but
-         * it also avoids some ugly generic bounds that `expect/unwrap` require.
-         *
-         * ```
-         * let result = inner.parse::<T>().map_err(|_| {
-         *     ValidationError::InvalidNumber(inner, min.into(), max.into())
-         * })?;
-         * ```
-         */
-        let parse_result = inner.parse::<T>();
-
-        if parse_result.is_err() {
-            return Err(ValidationError::InvalidNumber(
-                inner,
-                min.into(),
-                max.into(),
-            ));
-        }
-
-        #[expect(unsafe_code, reason = "error case explicitly handled above")]
-        let result = unsafe { parse_result.unwrap_unchecked() };
+        let Ok(result) = inner.parse::<T>() else {
+            return Err(
+                ValidationError::InvalidNumber(
+                    inner,
+                    min.into(),
+                    max.into(),
+                )
+            );
+        };
 
         if (min..=max).contains(&result) {
             Ok(result)
