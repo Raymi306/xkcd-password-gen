@@ -1,5 +1,5 @@
 [package]
-name = "config-builder-derive"
+name = "strenum-derive"
 version = "0.1.0"
 edition = "2024"
 authors = ["Andrew Langmeier"]
@@ -7,6 +7,7 @@ authors = ["Andrew Langmeier"]
 [dependencies]
 syn = "2.0"
 quote = "1.0"
+stringcase = "0.4"
 
 [lib]
 proc-macro = true

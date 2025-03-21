@@ -11,7 +11,7 @@ use crate::consts::DEFAULT_WORD_MAX_LENGTH;
 use crate::consts::DEFAULT_WORD_MIN_LENGTH;
 use crate::types::PaddingType;
 use crate::types::RngType;
-use crate::types::StrIsEnumMember;
+use crate::types::StrEnum;
 use crate::types::ValidationError;
 use crate::types::WordTransformationType;
 

@@ -14,11 +14,10 @@ rand = "0.9"
 rand_core = "0.9"
 getopts = "0.2"
 config-builder-derive = { path = "config-builder-derive" }
+strenum-derive = { path = "strenum-derive" }
 
 [build-dependencies]
 quote = "1.0"
-
-[features]
 
 [lints.rust]
 unsafe_code = { level = "deny", priority = 0 }

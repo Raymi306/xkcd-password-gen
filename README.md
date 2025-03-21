@@ -86,7 +86,7 @@ Options:
                         list of characters to choose from
     -s, --separator CHOICES, default="!@$%^&*-_+=:|~?/.;"
                         list of characters to choose from
-    -r, --rng TYPE, default=osrng
+    -r, --rng TYPE, default=os-rng
                         method of random number generation
 
 types are case insensitive
@@ -108,7 +108,7 @@ PADDING TYPES:
     adaptive (if unpadded password is less than padding-length, pad to length)
 
 RNG TYPES:
-    osrng  (the system's native secure RNG)
+    os-rng (the system's native secure RNG)
     csprng (a reasonably secure userspace RNG)
 ```
 
