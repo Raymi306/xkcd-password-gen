@@ -4,10 +4,7 @@ use strenum_derive::AutoStrEnum;
 
 type MinimalSupportedInteger = u8;
 
-pub trait Integer:
-    std::str::FromStr + Into<MinimalSupportedInteger> + PartialOrd + Copy
-{
-}
+pub trait Integer: std::str::FromStr + Into<MinimalSupportedInteger> + PartialOrd + Copy {}
 
 // to support more builtin integer types, just add below with specific types
 // and change MinimalSupportedInteger
