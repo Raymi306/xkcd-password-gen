@@ -82,6 +82,16 @@ pub enum PaddingType {
     Adaptive,
 }
 
+// TODO, fixes main.rs help brittleness in a const manner
+// do more stupid stuff with macros
+//
+// #[derive(StrEnum, Copy, Clone, Debug)]
+// pub enum RngType {
+//     #[default, example = "(the system's native secure RNG)"]
+//     OsRng,
+//     #[example = "(a reasonably secure userspace RNG)"]
+//     Csprng,
+// }
 #[derive(StrEnum, Copy, Clone, Debug)]
 pub enum RngType {
     #[default]

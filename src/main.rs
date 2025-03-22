@@ -26,6 +26,7 @@ use password_maker::PasswordMaker;
 use types::PaddingType;
 use types::RngType;
 use types::WordTransformationType;
+use types::StrEnum;
 
 #[expect(
     clippy::too_many_lines,
@@ -130,7 +131,7 @@ fn main() -> ExitCode {
         let brief = format!("Usage: {program_name} [options]");
         println!("{}", opts.usage(&brief));
         println!("types are case insensitive");
-        // TODO make less brittle, use ::to_static_str and some indentation formatting magic here
+        // TODO make less brittle
         println!("\nWORD TRANSFORMATIONS:");
         println!("    none");
         println!("    lower                   (correct horse battery staple)");

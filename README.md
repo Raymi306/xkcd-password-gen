@@ -43,6 +43,7 @@ Wordlist courtesy of the Electronic Frontier Foundation
 - CI
 - releases w/ signed binaries
 - logging?
+- macros, again
 - start updating Cargo.toml version fields
 
 ## Checklist Before Release
