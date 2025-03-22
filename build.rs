@@ -1,3 +1,4 @@
+//! Read the crates default wordlist and inject it into the binary as an array.
 #![allow(clippy::unwrap_used, reason = "build script panics are fine")]
 use std::env;
 use std::fs;

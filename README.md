@@ -35,16 +35,18 @@ Wordlist courtesy of the Electronic Frontier Foundation
 - explore reducing binary size more in "small" profile
 - symmetrical padding option, eg `*#$[PASSWORD]$#*`
 - additional CSPRNG options under feature flags?
+- dice RNG feature flag
 
 ### Housekeeping
 
-- documentation and comments
+- documentation and comments for macro crates
 - more automated tests
 - CI
 - releases w/ signed binaries
 - logging?
 - macros, again
 - start updating Cargo.toml version fields
+- make own UnwrapErr for TryRngCore
 
 ## Checklist Before Release
 

@@ -21,6 +21,7 @@ quote = "1.0"
 
 [lints.rust]
 unsafe_code = { level = "deny", priority = 0 }
+missing_docs = { level = "deny", priority = 0 }
 
 [lints.clippy]
 nursery = { level = "warn", priority = -1 }

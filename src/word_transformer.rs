@@ -1,35 +1,47 @@
+//! The different ways that words can be transformed.
 use rand::prelude::*;
 
+/// correct horse battery staple
 pub fn lower(words: Vec<String>) -> Vec<String> {
     words
         .into_iter()
         .map(|word| word.to_ascii_lowercase())
         .collect()
 }
+
+/// CORRECT HORSE BATTERY STAPLE
 pub fn upper(words: Vec<String>) -> Vec<String> {
     words
         .into_iter()
         .map(|word| word.to_ascii_uppercase())
         .collect()
 }
+
+/// Correct Horse Battery Staple
 pub fn capitalize_first(words: Vec<String>) -> Vec<String> {
     words
         .into_iter()
         .map(|w| capitalize_first_char(&w))
         .collect()
 }
+
+/// correcT horsE batterY staplE
 pub fn capitalize_last(words: Vec<String>) -> Vec<String> {
     words
         .into_iter()
         .map(|w| capitalize_last_char(&w))
         .collect()
 }
+
+/// cORRECT hORSE bATTERY sTAPLE
 pub fn capitalize_not_first(words: Vec<String>) -> Vec<String> {
     words
         .into_iter()
         .map(|w| capitalize_not_first_char(&w))
         .collect()
 }
+
+/// correct HORSE battery STAPLE
 pub fn alternating_lower_upper(words: Vec<String>) -> Vec<String> {
     words
         .into_iter()
@@ -43,6 +55,8 @@ pub fn alternating_lower_upper(words: Vec<String>) -> Vec<String> {
         })
         .collect()
 }
+
+/// CORRECT horse BATTERY staple
 pub fn alternating_upper_lower(words: Vec<String>) -> Vec<String> {
     words
         .into_iter()
@@ -56,6 +70,8 @@ pub fn alternating_upper_lower(words: Vec<String>) -> Vec<String> {
         })
         .collect()
 }
+
+/// correct HORSE battery staple
 pub fn random_upper_lower(rng: &mut (impl Rng + ?Sized), words: Vec<String>) -> Vec<String> {
     words
         .into_iter()
@@ -68,10 +84,14 @@ pub fn random_upper_lower(rng: &mut (impl Rng + ?Sized), words: Vec<String>) -> 
         })
         .collect()
 }
+
+/// foo -> Foo
 fn capitalize_first_char(word: &str) -> String {
     let first = word.chars().take(1).map(|c| c.to_ascii_uppercase());
     first.chain(word.chars().skip(1)).collect()
 }
+
+/// foo -> foO
 fn capitalize_last_char(word: &str) -> String {
     // UTF character length weirdness reminder
     let num_chars = word.chars().count();
@@ -86,6 +106,8 @@ fn capitalize_last_char(word: &str) -> String {
         )
         .collect()
 }
+
+/// foo -> fOO
 fn capitalize_not_first_char(word: &str) -> String {
     word.chars()
         .take(1)
@@ -93,6 +115,7 @@ fn capitalize_not_first_char(word: &str) -> String {
         .collect()
 }
 
+// TODO these tests would make great doctests
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -138,7 +161,7 @@ mod tests {
     fn test_word_transformer_lower() {
         let result = lower(make_wordlist());
         for word in result {
-            assert!(string_is_lowercase(&word));
+            assert!(str_is_lowercase(&word));
         }
     }
 
@@ -146,7 +169,7 @@ mod tests {
     fn test_word_transformer_upper() {
         let result = upper(make_wordlist());
         for word in result {
-            assert!(string_is_uppercase(&word));
+            assert!(str_is_uppercase(&word));
         }
     }
 

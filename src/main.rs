@@ -1,3 +1,4 @@
+//! Create customized memorable passwords.
 use std::env;
 use std::process::ExitCode;
 
@@ -13,20 +14,18 @@ mod types;
 mod word_transformer;
 
 use config::ConfigBuilder;
-use consts::DEFAULT_COUNT;
-use consts::DEFAULT_DIGITS_AFTER;
-use consts::DEFAULT_DIGITS_BEFORE;
-use consts::DEFAULT_PADDING_LENGTH_ADAPTIVE;
-use consts::DEFAULT_PADDING_LENGTH_FIXED;
-use consts::DEFAULT_SYMBOL_ALPHABET;
-use consts::DEFAULT_WORD_COUNT;
-use consts::DEFAULT_WORD_MAX_LENGTH;
-use consts::DEFAULT_WORD_MIN_LENGTH;
+use consts::default;
 use password_maker::PasswordMaker;
 use types::PaddingType;
 use types::RngType;
 use types::WordTransformationType;
 
+/// The entrypoint.
+///
+/// Here, we define the programs CLI arguments.
+/// We use the [`getopts` library](https://docs.rs/getopts/latest/getopts/) to accomplish this.
+/// We check which arguments the user passed in and create a Config.
+/// Finally, based off of the config, we generate passwords.
 #[expect(
     clippy::too_many_lines,
     reason = "As long as it is fairly simple and readable..."
@@ -34,7 +33,7 @@ use types::WordTransformationType;
 fn main() -> ExitCode {
     let default_symbol_alphabet_help: String = format!(
         "CHOICES, default=\"{}\"",
-        DEFAULT_SYMBOL_ALPHABET
+        default::SYMBOL_ALPHABET
             .into_iter()
             .map(String::from)
             .collect::<String>()
@@ -49,25 +48,25 @@ fn main() -> ExitCode {
         "c",
         "count",
         "how many passwords to make",
-        &format!("NUM, default={DEFAULT_COUNT}"),
+        &format!("NUM, default={}", default::COUNT),
     );
     opts.optopt(
         "w",
         "word-count",
         "number of words",
-        &format!("NUM, default={DEFAULT_WORD_COUNT}"),
+        &format!("NUM, default={}", default::WORD_COUNT),
     );
     opts.optopt(
         "m",
         "word-min-length",
         "minimum length of a chosen word",
-        &format!("NUM, default={DEFAULT_WORD_MIN_LENGTH}"),
+        &format!("NUM, default={}", default::WORD_MIN_LENGTH),
     );
     opts.optopt(
         "M",
         "word-max-length",
         "maximum length of a chosen word",
-        &format!("NUM, default={DEFAULT_WORD_MAX_LENGTH}"),
+        &format!("NUM, default={}", default::WORD_MAX_LENGTH),
     );
     opts.optopt(
         "W",
@@ -79,25 +78,29 @@ fn main() -> ExitCode {
         "b",
         "digits-before",
         "number of digits to prepend",
-        &format!("NUM, default={DEFAULT_DIGITS_BEFORE}"),
+        &format!("NUM, default={}", default::DIGITS_BEFORE),
     );
     opts.optopt(
         "a",
         "digits-after",
         "number of digits to append",
-        &format!("NUM, default={DEFAULT_DIGITS_AFTER}"),
+        &format!("NUM, default={}", default::DIGITS_AFTER),
     );
     opts.optopt(
         "T",
         "padding-type",
-        "how to pad",
+        "how to apply padding",
         &format!("TYPE, default={}", &PaddingType::default()),
     );
     opts.optopt(
         "l",
         "padding-length",
         "how much to pad",
-        &format!("NUM, default={DEFAULT_PADDING_LENGTH_FIXED} for fixed, {DEFAULT_PADDING_LENGTH_ADAPTIVE} for adaptive"),
+        &format!(
+            "NUM, default={} for fixed, {} for adaptive",
+            default::PADDING_LENGTH_FIXED,
+            default::PADDING_LENGTH_ADAPTIVE
+        ),
     );
     opts.optopt(
         "p",
@@ -126,11 +129,13 @@ fn main() -> ExitCode {
         }
     };
 
+    // if the help flag is present, there are no arguments (bear in mind that the first arg is the
+    // program name), or there are unused arguments, display a help message.
     if matches.opt_present("h") || args.len() == 1 || !matches.free.is_empty() {
         let brief = format!("Usage: {program_name} [options]");
         println!("{}", opts.usage(&brief));
         println!("types are case insensitive");
-        // TODO make less brittle
+        // TODO make less brittle, see crate::types
         println!("\nWORD TRANSFORMATIONS:");
         println!("    none");
         println!("    lower                   (correct horse battery staple)");
@@ -144,13 +149,16 @@ fn main() -> ExitCode {
         println!("\nPADDING TYPES:");
         println!("    none");
         println!("    fixed    (add padding-length padding-characters to front and back)");
-        println!("    adaptive (if unpadded password is less than padding-length, pad to length)");
+        println!(
+            "    adaptive (if unpadded password is less than padding-length, append padding-characters to meet length)"
+        );
         println!("\nRNG TYPES:");
         println!("    os-rng (the system's native secure RNG)");
         println!("    csprng (a reasonably secure userspace RNG)");
         return ExitCode::SUCCESS;
     }
 
+    // TODO this boilerplate could be reduced
     let config_builder = ConfigBuilder::new()
         .count(matches.opt_str("count"))
         .word_count(matches.opt_str("word-count"))
@@ -166,6 +174,10 @@ fn main() -> ExitCode {
         .rng_type(matches.opt_str("rng"));
 
     match config_builder.build() {
+        Err(e) => {
+            eprintln!("{e}");
+            ExitCode::FAILURE
+        }
         Ok(config) => {
             let result = match config.rng_type {
                 RngType::OsRng => PasswordMaker::<OsRng>::new(config).create_passwords(),
@@ -175,10 +187,6 @@ fn main() -> ExitCode {
                 println!("{password}");
             }
             ExitCode::SUCCESS
-        }
-        Err(e) => {
-            eprintln!("{e}");
-            ExitCode::FAILURE
         }
     }
 }

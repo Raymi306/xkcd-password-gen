@@ -1,3 +1,4 @@
+//! Shared testing functionality.
 #![cfg(test)]
 /*
  * provides:
@@ -12,6 +13,7 @@ use rand::rngs::SmallRng;
 use crate::config::ConfigBuilder;
 use crate::password_maker::PasswordMaker;
 
+/// Makes a `PasswordMaker` with reproducible random output.
 pub fn make_seeded_maker(seed: u64) -> PasswordMaker<SmallRng> {
     let rng = SmallRng::seed_from_u64(seed).unwrap_err();
     PasswordMaker {
@@ -21,6 +23,7 @@ pub fn make_seeded_maker(seed: u64) -> PasswordMaker<SmallRng> {
     }
 }
 
+/// Makes a small, easy to work with wordlist.
 pub fn make_wordlist() -> Vec<String> {
     [
         "modern", "labor", "hello", "world", "water", "fire", "deep", "ice", "pie",
@@ -30,10 +33,12 @@ pub fn make_wordlist() -> Vec<String> {
     .collect()
 }
 
-pub fn string_is_uppercase(word: &str) -> bool {
+/// Check if a &str is uppercase.
+pub fn str_is_uppercase(word: &str) -> bool {
     word.chars().all(char::is_uppercase)
 }
 
-pub fn string_is_lowercase(word: &str) -> bool {
+/// Check if a &str is lowercase.
+pub fn str_is_lowercase(word: &str) -> bool {
     word.chars().all(char::is_lowercase)
 }
