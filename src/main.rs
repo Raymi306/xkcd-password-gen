@@ -36,9 +36,7 @@ fn main() -> ExitCode {
     // TODO this ought to be const
     let default_symbol_alphabet_help: String = format!(
         "CHOICES, default=\"{}\"",
-        default::SYMBOL_ALPHABET
-            .into_iter()
-            .collect::<String>()
+        default::SYMBOL_ALPHABET.into_iter().collect::<String>()
     );
 
     let args: Vec<String> = env::args().collect();
