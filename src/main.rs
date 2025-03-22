@@ -33,11 +33,11 @@ use types::WordTransformationType;
     reason = "As long as it is fairly simple and readable..."
 )]
 fn main() -> ExitCode {
+    // TODO this ought to be const
     let default_symbol_alphabet_help: String = format!(
         "CHOICES, default=\"{}\"",
         default::SYMBOL_ALPHABET
             .into_iter()
-            .map(String::from)
             .collect::<String>()
     );
 
