@@ -34,6 +34,7 @@ fn main() {
     }
 
     let output = quote! {
+        /// Compile-time generated wordlist
         static WORDLIST: &[&str] = &[#(#words,)*];
     };
 

@@ -1,8 +1,5 @@
-use proc_macro::{self, TokenStream};
-
-use quote::quote;
-use syn::{DeriveInput, Ident, parse_macro_input};
-
+/// Reduce ConfigBuilder boiler plate.
+///
 /// ```
 /// #[derive(AutoConfigBuilder, Debug, Default)]
 /// pub struct ConfigBuilder {
@@ -25,6 +22,12 @@ use syn::{DeriveInput, Ident, parse_macro_input};
 ///        Self::default()
 ///    }
 ///}
+use proc_macro::{self, TokenStream};
+
+use quote::quote;
+use syn::{DeriveInput, Ident, parse_macro_input};
+
+/// Provides AutoConfigBuilder derive macro
 #[proc_macro_derive(AutoConfigBuilder)]
 pub fn derive(input: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(input as DeriveInput);

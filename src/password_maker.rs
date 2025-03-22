@@ -1,4 +1,6 @@
-//! Provides the `PasswordMaker` struct.
+//! Provides the [`PasswordMaker`] struct.
+//!
+//! The password generation algorithm is implemented here.
 // provides:
 // static WORDLIST: &[&str] = &[...]
 include!(concat!(env!("OUT_DIR"), "/wordlist.rs"));
@@ -16,7 +18,7 @@ use crate::types::PaddingType;
 use crate::types::WordTransformationType;
 use crate::word_transformer;
 
-/// This struct turns a Config into passwords.
+/// Turn a [`Config`] into passwords.
 #[derive(Debug)]
 pub struct PasswordMaker<T>
 where
@@ -45,7 +47,7 @@ where
     }
 }
 
-/// Note that `rand_core::SeedableRng` does not impl `Default`.
+/// Note that [`rand_core::SeedableRng`] does not impl [`Default`].
 /// This is a small struct, creating an instance without a `new` method
 /// is not too bad, and `SeedableRng` is only useful for testing.
 impl<T> PasswordMaker<T>
@@ -68,6 +70,7 @@ where
     /// Filter out words that do not fit between the configured minimum and maximum length.
     ///
     /// Return indexes indicating which words we wish to keep.
+    /// Working with indexes avoids pointer hell and reduces memory allocation and storage requirements.
     #[expect(
         clippy::cast_possible_truncation,
         reason = "u32 MAX is more than enough for any reasonable word list length"
@@ -84,9 +87,7 @@ where
     }
     /// Choose with replacement a configured number of words.
     ///
-    /// Operate initially on indexes for performance and to avoid pointer hell.
-    ///
-    /// Convert each chosen word from an index into a `String`.
+    /// Convert each chosen word from an index into a [`String`].
     fn choose_words(&mut self, indices: &[u32]) -> Vec<String> {
         if indices.is_empty() {
             return Vec::new();
@@ -104,7 +105,7 @@ where
             .map(|n| self.wordlist[*n as usize].clone())
             .collect()
     }
-    /// Use the configured `WordTransformationType` to transform a Vec of words.
+    /// Use the configured [`WordTransformationType`] to transform a [`Vec<String>`] of words.
     fn transform_words(&mut self, words: Vec<String>) -> Vec<String> {
         if words.is_empty() {
             return words;
@@ -129,7 +130,7 @@ where
             }
         }
     }
-    /// Choose with replacement `n` digits to form and return an `Option<String>`.
+    /// Choose with replacement `n` digits to form and return an [`Option<String>`].
     fn choose_n_digits(&mut self, n: usize) -> Option<String> {
         if n == 0 {
             return None;
@@ -145,7 +146,7 @@ where
         Some(buf.into_iter().collect())
     }
     /// Create the before and after pseudo-words.
-    /// A pseudo-word is a String of 0 or more digits.
+    /// A pseudo-word is a string of 0 or more digits.
     fn create_pseudo_words(&mut self) -> (Option<String>, Option<String>) {
         let before = self.choose_n_digits(self.config.digits_before as usize);
         let after = self.choose_n_digits(self.config.digits_after as usize);
@@ -159,8 +160,8 @@ where
             .copied()
     }
     /// Given the password we have created thus far, create the before and after padding.
-    /// `PaddingType::Fixed` prepends and appends an equal number of padding characters.
-    /// `PaddingType::Adaptive` will append padding characters to meet the desired length.
+    /// [`PaddingType::Fixed`] prepends and appends an equal number of padding characters.
+    /// [`PaddingType::Adaptive`] will append padding characters to meet the desired length.
     /// Note that if the desired length is shorter than the unpadded password, adaptive
     /// padding is a no-op.
     fn create_padding(&mut self, password: &str) -> (Option<String>, Option<String>) {
@@ -208,7 +209,7 @@ where
         .join("")
     }
     /// Create passwords.
-    /// This is the public interface for the `PasswordMaker` struct.
+    /// This is the public interface for the [`PasswordMaker`] struct.
     pub fn create_passwords(&mut self) -> Vec<String> {
         let count = self.config.count as usize;
         let mut buf = Vec::with_capacity(count);

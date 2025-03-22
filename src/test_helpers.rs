@@ -13,7 +13,7 @@ use rand::rngs::SmallRng;
 use crate::config::ConfigBuilder;
 use crate::password_maker::PasswordMaker;
 
-/// Makes a `PasswordMaker` with reproducible random output.
+/// Makes a [`PasswordMaker`] with reproducible random output.
 pub fn make_seeded_maker(seed: u64) -> PasswordMaker<SmallRng> {
     let rng = SmallRng::seed_from_u64(seed).unwrap_err();
     PasswordMaker {

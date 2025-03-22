@@ -1,9 +1,5 @@
-use proc_macro::{self, TokenStream};
-
-use quote::quote;
-use stringcase::kebab_case;
-use syn::{DeriveInput, Fields, Ident, Meta, parse_macro_input};
-
+/// Give enums superpowers.
+///
 /// ```
 /// #[derive(StrEnum, Copy, Clone, Debug)]
 /// pub enum RngType {
@@ -41,8 +37,15 @@ use syn::{DeriveInput, Fields, Ident, Meta, parse_macro_input};
 /// impl Default for RngType {
 ///     fn default() -> Self { Self::default_const() }
 /// }
+use proc_macro::{self, TokenStream};
+
+use quote::quote;
+use stringcase::kebab_case;
+use syn::{DeriveInput, Fields, Ident, Meta, parse_macro_input};
+
+/// Provides StrEnum derive macro
 #[proc_macro_derive(StrEnum, attributes(default))]
-pub fn strenum(input: TokenStream) -> TokenStream {
+pub fn derive(input: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(input as DeriveInput);
 
     let enum_name = &ast.ident;

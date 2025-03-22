@@ -12,7 +12,7 @@ pub trait Integer: std::str::FromStr + Into<MinimalSupportedInteger> + PartialOr
 
 /// To support more standard integer types, add additional impls.
 ///
-/// ## Example
+/// # Example
 /// ```
 /// impl Integer for u8 {}
 /// type MinimalSupportedInteger = u16
@@ -48,7 +48,7 @@ impl std::error::Error for ValidationError {}
 /// - Allows for converting an enum member into it's kebab-case name.  (implemented by derive macro)
 /// - Allows for converting a &str to an enum member.                  (default implementation provided)
 ///
-/// Is used in conjunction with the `AutoStrEnum` derive macro to provide
+/// Is used in conjunction with the [`StrEnum`] derive macro to provide
 /// low boilerplate "types" that are easy to reason with on the command line.
 pub trait StrEnum: Sized + Default + Clone + Copy
 where
@@ -60,11 +60,16 @@ where
     fn into_iter() -> impl Iterator<Item = &'static (&'static str, Self)>;
     fn to_member(member: &str) -> Result<&Self, ValidationError> {
         Self::into_iter()
+            // compare str
             .find(|(s, _)| *s == member)
-            .map(|inner| &inner.1)
+            // map to Self
+            .map(|(_, e)| e)
             .ok_or_else(|| {
+                // lazily generate error message
+                // TODO add const [] of just &'static str member names
+                // TODO consider making valid_choices const
                 let valid_choices = Self::into_iter()
-                    .map(|inner| inner.0)
+                    .map(|(s, _)| *s)
                     .collect::<Vec<&str>>()
                     .join(", ");
                 let parent = Self::NAME;
@@ -75,6 +80,16 @@ where
             })
     }
 }
+// TODO, fix main.rs help brittleness
+// do more stupid stuff with macros, pull the docstring as const help text
+//
+// #[derive(StrEnum, Copy, Clone, Debug)]
+// pub enum RngType {
+//     /// the system's native secure RNG
+//     #[default]
+//     OsRng,
+//     ...
+// }
 
 /// The different ways words can be transformed.
 #[derive(StrEnum, Copy, Clone, Debug)]
@@ -110,16 +125,6 @@ pub enum PaddingType {
     Adaptive,
 }
 
-// TODO, fixes main.rs help brittleness in a const manner
-// do more stupid stuff with macros
-//
-// #[derive(StrEnum, Copy, Clone, Debug)]
-// pub enum RngType {
-//     #[default, example = "(the system's native secure RNG)"]
-//     OsRng,
-//     #[example = "(a reasonably secure userspace RNG)"]
-//     Csprng,
-// }
 /// The different random number generator options.
 #[derive(StrEnum, Copy, Clone, Debug)]
 pub enum RngType {

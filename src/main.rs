@@ -26,8 +26,8 @@ use types::WordTransformationType;
 ///
 /// Here, we define the program's CLI arguments.
 /// We use the [`getopts` library](https://docs.rs/getopts/latest/getopts/) to accomplish this.
-/// We check which arguments the user passed in and create a Config.
-/// Finally, based off of the config, we generate passwords.
+/// We check which arguments the user passed in and create a [`config::Config`].
+/// Finally, we generate passwords using the specified configuration.
 #[expect(
     clippy::too_many_lines,
     reason = "As long as it is fairly simple and readable..."
@@ -134,29 +134,27 @@ fn main() -> ExitCode {
     // if the help flag is present or if there are unused arguments, display a help message.
     if matches.opt_present("h") || !matches.free.is_empty() {
         let brief = format!("Usage: {program_name} [options]");
+        println!("{}", opts.usage(&brief));
+        println!("types are case insensitive");
+        // TODO make less brittle, see crate::types
+        println!("\nWORD TRANSFORMATIONS:");
+        println!("    none");
+        println!("    lower                   (correct horse battery staple)");
+        println!("    upper                   (CORRECT HORSE BATTERY STAPLE)");
+        println!("    capitalize-first        (Correct Horse Battery Staple)");
+        println!("    capitalize-last         (correcT horsE batterY staplE)");
+        println!("    capitalize-not-first    (cORRECT hORSE bATTERY sTAPLE)");
+        println!("    alternating-lower-upper (correct HORSE battery STAPLE)");
+        println!("    alternating-upper-lower (CORRECT horse BATTERY staple)");
+        println!("    random-upper-lower      (correct HORSE battery staple)");
+        println!("\nPADDING TYPES:");
+        println!("    none");
+        println!("    fixed    (add padding-length padding-characters to front and back)");
         #[rustfmt::skip]
-        {
-            println!("{}", opts.usage(&brief));
-            println!("types are case insensitive");
-            // TODO make less brittle, see crate::types
-            println!("\nWORD TRANSFORMATIONS:");
-            println!("    none");
-            println!("    lower                   (correct horse battery staple)");
-            println!("    upper                   (CORRECT HORSE BATTERY STAPLE)");
-            println!("    capitalize-first        (Correct Horse Battery Staple)");
-            println!("    capitalize-last         (correcT horsE batterY staplE)");
-            println!("    capitalize-not-first    (cORRECT hORSE bATTERY sTAPLE)");
-            println!("    alternating-lower-upper (correct HORSE battery STAPLE)");
-            println!("    alternating-upper-lower (CORRECT horse BATTERY staple)");
-            println!("    random-upper-lower      (correct HORSE battery staple)");
-            println!("\nPADDING TYPES:");
-            println!("    none");
-            println!("    fixed    (add padding-length padding-characters to front and back)");
-            println!("    adaptive (if unpadded password is less than padding-length, append padding-characters to meet length)");
-            println!("\nRNG TYPES:");
-            println!("    os-rng (the system's native secure RNG)");
-            println!("    csprng (a reasonably secure userspace RNG)");
-        }
+        println!("    adaptive (if unpadded password is less than padding-length, append padding-characters to meet length)");
+        println!("\nRNG TYPES:");
+        println!("    os-rng (the system's native secure RNG)");
+        println!("    csprng (a reasonably secure userspace RNG)");
         return ExitCode::SUCCESS;
     }
 
