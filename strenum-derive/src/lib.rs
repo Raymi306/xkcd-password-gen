@@ -10,6 +10,7 @@ use syn::{DeriveInput, Fields, Ident, Meta, parse_macro_input};
 ///     #[default]
 ///     OsRng,
 ///     Csprng,
+/// }
 /// ```
 /// expands to:
 /// ```
