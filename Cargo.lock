@@ -113,7 +113,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "strenum"
+name = "strenum-derive"
 version = "0.1.0"
 dependencies = [
  "quote",
@@ -177,7 +177,7 @@ dependencies = [
  "quote",
  "rand",
  "rand_core",
- "strenum",
+ "strenum-derive",
 ]
 
 [[package]]

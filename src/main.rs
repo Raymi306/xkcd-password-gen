@@ -26,7 +26,6 @@ use password_maker::PasswordMaker;
 use types::PaddingType;
 use types::RngType;
 use types::WordTransformationType;
-use types::StrEnum;
 
 #[expect(
     clippy::too_many_lines,

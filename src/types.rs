@@ -1,6 +1,6 @@
 use std::fmt;
 
-use strenum::StrEnum;
+use strenum_derive::StrEnum;
 
 type MinimalSupportedInteger = u8;
 
