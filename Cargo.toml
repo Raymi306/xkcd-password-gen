@@ -7,7 +7,7 @@ description = "A memorable password generator inspired by XKCD 936"
 repository = "https://github.com/Raymi306/xkcd-password-gen"
 categories = ["command-line-utilities"]
 keywords = ["xkcd", "password"]
-license-file = "LICENSE"
+license = "AGPL-3.0-only"
 
 [dependencies]
 rand = "0.9"
