@@ -76,8 +76,9 @@ fn validate_int<T: Integer>(
 }
 
 fn validate_enum<T: StrEnum>(value: Option<String>) -> Result<T, ValidationError> {
+    #[expect(clippy::or_fun_call, reason = "Function call is not expensive.")]
     value.map_or(Ok(T::default()), |inner| {
-        T::to_member(&inner.to_ascii_lowercase())
+        T::to_member(&inner.to_ascii_lowercase()).copied()
     })
 }
 

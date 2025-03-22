@@ -1,6 +1,6 @@
 use std::fmt;
 
-use strenum_derive::AutoStrEnum;
+use strenum::StrEnum;
 
 type MinimalSupportedInteger = u8;
 
@@ -34,14 +34,18 @@ impl fmt::Display for ValidationError {
 
 impl std::error::Error for ValidationError {}
 
-pub trait StrEnum: Sized + Default {
+pub trait StrEnum: Sized + Default + Clone + Copy
+where
+    Self: 'static,
+{
     const NAME: &'static str;
+    const NAME_MEMBER_ARR: &[(&str, Self)];
     fn to_static_str(&self) -> &'static str;
-    fn into_iter() -> impl Iterator<Item = (&'static str, Self)>;
-    fn to_member(member: &str) -> Result<Self, ValidationError> {
+    fn into_iter() -> impl Iterator<Item = &'static (&'static str, Self)>;
+    fn to_member(member: &str) -> Result<&Self, ValidationError> {
         Self::into_iter()
             .find(|(s, _)| *s == member)
-            .map(|inner| inner.1)
+            .map(|inner| &inner.1)
             .ok_or_else(|| {
                 let valid_choices = Self::into_iter()
                     .map(|inner| inner.0)
@@ -56,7 +60,7 @@ pub trait StrEnum: Sized + Default {
     }
 }
 
-#[derive(Debug, Default, AutoStrEnum)]
+#[derive(StrEnum, Copy, Clone, Debug)]
 pub enum WordTransformationType {
     None,
     Lower,
@@ -70,7 +74,7 @@ pub enum WordTransformationType {
     RandomUpperLower,
 }
 
-#[derive(Debug, Default, AutoStrEnum)]
+#[derive(StrEnum, Copy, Clone, Debug)]
 pub enum PaddingType {
     None,
     #[default]
@@ -78,7 +82,7 @@ pub enum PaddingType {
     Adaptive,
 }
 
-#[derive(Debug, Default, AutoStrEnum)]
+#[derive(StrEnum, Copy, Clone, Debug)]
 pub enum RngType {
     #[default]
     OsRng,

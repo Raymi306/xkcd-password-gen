@@ -31,7 +31,7 @@ Wordlist courtesy of the Electronic Frontier Foundation
 - custom wordlists
 - feature flag to not include default wordlist
 - gui feature flag
-- long help or manpage
+- short/long help or manpage
 - explore reducing binary size more in "small" profile
 - symmetrical padding option, eg `*#$[PASSWORD]$#*`
 - additional CSPRNG options under feature flags?
@@ -43,7 +43,6 @@ Wordlist courtesy of the Electronic Frontier Foundation
 - CI
 - releases w/ signed binaries
 - logging?
-- macros
 - start updating Cargo.toml version fields
 
 ## Checklist Before Release

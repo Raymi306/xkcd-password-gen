@@ -1,5 +1,5 @@
 [package]
-name = "strenum-derive"
+name = "strenum"
 version = "0.1.0"
 edition = "2024"
 authors = ["Andrew Langmeier"]
