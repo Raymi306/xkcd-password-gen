@@ -3,8 +3,8 @@
 /// ```
 /// #[derive(AutoConfigBuilder, Debug, Default)]
 /// pub struct ConfigBuilder {
-///     pub field1: Option<String>
-///     pub field2: Option<String>
+///     pub field1: Option<String>,
+///     pub field2: Option<String>,
 /// }
 /// ```
 /// expands to:
