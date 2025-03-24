@@ -39,11 +39,9 @@ Wordlist courtesy of the Electronic Frontier Foundation
 
 ### Housekeeping
 
-- documentation and comments for macro crates
-- more automated tests
-- CI
+- more tests
+- setup a workspace to manage all 3 crates correctly
 - releases w/ signed binaries
-- logging?
 - macros, again
 - start updating Cargo.toml version fields
 - make own UnwrapErr for TryRngCore
