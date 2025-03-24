@@ -51,12 +51,7 @@ Wordlist courtesy of the Electronic Frontier Foundation
 
 - [ ] README.md up-to-date?
 - [ ] Cargo.toml package version bumped?
-
-### Items for CI to worry about
-
-- [ ] `cargo fmt` + `cargo clippy`
-- [ ] `cargo test`
-- [ ] `./run_bench.sh`
+- [ ] `./run_bench.sh` run?
 
 ## Examples ( as of [b08a313](https://github.com/Raymi306/xkcd-password-gen/tree/b08a313bfed1113cc140ebbfe9a050df7abfe8bb) )
 
