@@ -60,9 +60,6 @@ pub fn derive(input: TokenStream) -> TokenStream {
                     self
                 }
             )*
-            pub fn new() -> Self {
-                Self::default()
-            }
         }
     };
     output.into()

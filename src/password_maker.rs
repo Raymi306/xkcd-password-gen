@@ -221,7 +221,7 @@ where
 }
 
 #[cfg(test)]
-mod password_maker_tests {
+mod tests {
     use crate::test_helpers::*;
 
     #[test]
