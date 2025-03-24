@@ -134,3 +134,46 @@ pub enum RngType {
     /// a reasonably secure userspace RNG
     Csprng,
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use std::mem::discriminant;
+
+    #[test]
+    fn test_strenum_name() {
+        assert_eq!(RngType::NAME, "RngType");
+    }
+
+    #[test]
+    fn test_strenum_name_member_arr() {
+        assert_eq!("os-rng", RngType::NAME_MEMBER_ARR[0].0);
+        assert_eq!("csprng", RngType::NAME_MEMBER_ARR[1].0);
+        assert_eq!(
+            discriminant(&RngType::OsRng),
+            discriminant(&RngType::NAME_MEMBER_ARR[0].1)
+        );
+        assert_eq!(
+            discriminant(&RngType::Csprng),
+            discriminant(&RngType::NAME_MEMBER_ARR[1].1)
+        );
+    }
+
+    #[test]
+    fn test_strenum_to_static_str() {
+        assert_eq!("os-rng", RngType::OsRng.to_static_str());
+    }
+
+    #[test]
+    fn test_strenum_to_member_success() {
+        assert_eq!(
+            discriminant(RngType::to_member("os-rng").unwrap()),
+            discriminant(&RngType::OsRng)
+        );
+    }
+
+    #[test]
+    fn test_strenum_to_member_err() {
+        RngType::to_member("not-a-member").unwrap_err();
+    }
+}
