@@ -1,7 +1,8 @@
 # xkcd-password-gen
 
-[xkcd 936](https://xkcd.com/936/)
-![xkcd 936 image](https://imgs.xkcd.com/comics/password_strength_2x.png)
+![cargo-audit](https://github.com/Raymi306/xkcd-password-gen/actions/workflows/audit.yml/badge.svg)
+
+[![xkcd 936 image](https://imgs.xkcd.com/comics/password_strength_2x.png)](https://xkcd.com/936/)
 
 ## Inspiration
 
