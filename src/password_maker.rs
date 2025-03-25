@@ -155,7 +155,7 @@ where
     /// Choose a separator character from the configured choices.
     fn choose_separator(&mut self) -> Option<char> {
         self.config
-            .separator_character
+            .separator_characters
             .choose(&mut self.rng)
             .copied()
     }
@@ -171,9 +171,9 @@ where
             PaddingType::Fixed => (len, len),
             PaddingType::Adaptive => (0, len.saturating_sub(password.chars().count())),
         };
-        let padding_character = self.config.padding_character.choose(&mut self.rng);
-        let before = iter::repeat(padding_character).take(before_len).collect();
-        let after = iter::repeat(padding_character).take(after_len).collect();
+        let padding_characters = self.config.padding_characters.choose(&mut self.rng);
+        let before = iter::repeat(padding_characters).take(before_len).collect();
+        let after = iter::repeat(padding_characters).take(after_len).collect();
         (before, after)
     }
     /// Create a password.
@@ -341,7 +341,7 @@ mod tests {
     #[test]
     fn test_choose_separator_empty() {
         let mut maker = make_seeded_maker(1);
-        maker.config.separator_character = Vec::new();
+        maker.config.separator_characters = Vec::new();
         let result = maker.choose_separator();
         assert!(result.is_none());
     }
@@ -374,7 +374,7 @@ mod tests {
     fn test_create_padding_fixed_empty() {
         let mut maker = make_seeded_maker(1);
         maker.config.padding_type = PaddingType::Fixed;
-        maker.config.padding_character = Vec::new();
+        maker.config.padding_characters = Vec::new();
         let (left, right) = maker.create_padding("");
         assert!(left.is_none());
         assert!(right.is_none());
@@ -392,7 +392,7 @@ mod tests {
     fn test_create_padding_adaptive_empty() {
         let mut maker = make_seeded_maker(1);
         maker.config.padding_type = PaddingType::Adaptive;
-        maker.config.padding_character = Vec::new();
+        maker.config.padding_characters = Vec::new();
         let (left, right) = maker.create_padding("");
         assert_eq!("", &left.unwrap());
         assert!(right.is_none());

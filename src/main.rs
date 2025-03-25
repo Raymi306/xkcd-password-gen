@@ -104,13 +104,13 @@ fn main() -> ExitCode {
     );
     opts.optopt(
         "p",
-        "padding-character",
+        "padding-characters",
         "list of characters to choose from",
         &default_symbol_alphabet_help,
     );
     opts.optopt(
         "s",
-        "separator",
+        "separators",
         "list of characters to choose from",
         &default_symbol_alphabet_help,
     );
@@ -167,8 +167,8 @@ fn main() -> ExitCode {
         .digits_after(matches.opt_str("digits-after"))
         .padding_type(matches.opt_str("padding-type"))
         .padding_length(matches.opt_str("padding-length"))
-        .padding_character(matches.opt_str("padding-character"))
-        .separator_character(matches.opt_str("separator"))
+        .padding_characters(matches.opt_str("padding-characters"))
+        .separator_characters(matches.opt_str("separators"))
         .rng_type(matches.opt_str("rng"));
 
     match config_builder.build() {

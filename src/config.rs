@@ -30,9 +30,9 @@ pub struct Config {
     /// how much to pad
     pub padding_length: u8,
     /// list of characters from which to choose the padding character
-    pub padding_character: Vec<char>,
+    pub padding_characters: Vec<char>,
     /// list of characters from which to choose the separator character
-    pub separator_character: Vec<char>,
+    pub separator_characters: Vec<char>,
     /// method of random number generation
     pub rng_type: RngType,
 }
@@ -49,8 +49,8 @@ pub struct ConfigBuilder {
     digits_after: Option<String>,
     padding_type: Option<String>,
     padding_length: Option<String>,
-    padding_character: Option<String>,
-    separator_character: Option<String>,
+    padding_characters: Option<String>,
+    separator_characters: Option<String>,
     rng_type: Option<String>,
 }
 
@@ -126,8 +126,8 @@ impl ConfigBuilder {
             validate_enum::<WordTransformationType>(self.word_transformation)?;
         let digits_before = validate_int::<u8>(self.digits_before, 0, 255, default::DIGITS_BEFORE)?;
         let digits_after = validate_int::<u8>(self.digits_after, 0, 255, default::DIGITS_AFTER)?;
-        let padding_character = uniquify_chars(self.padding_character, &default::SYMBOL_ALPHABET);
-        let padding_type = if padding_character.is_empty() {
+        let padding_characters = uniquify_chars(self.padding_characters, &default::SYMBOL_ALPHABET);
+        let padding_type = if padding_characters.is_empty() {
             PaddingType::None
         } else {
             validate_enum::<PaddingType>(self.padding_type)?
@@ -139,8 +139,8 @@ impl ConfigBuilder {
                 PaddingType::None => 0,
             }
         })?;
-        let separator_character =
-            uniquify_chars(self.separator_character, &default::SYMBOL_ALPHABET);
+        let separator_characters =
+            uniquify_chars(self.separator_characters, &default::SYMBOL_ALPHABET);
         let rng_type = validate_enum::<RngType>(self.rng_type)?;
 
         Ok(Config {
@@ -153,8 +153,8 @@ impl ConfigBuilder {
             digits_after,
             padding_type,
             padding_length,
-            padding_character,
-            separator_character,
+            padding_characters,
+            separator_characters,
             rng_type,
         })
     }
@@ -183,9 +183,9 @@ mod tests {
             discriminant(&PaddingType::default())
         );
         assert_eq!(config.padding_length, default::PADDING_LENGTH_FIXED);
-        assert_eq!(config.padding_character, default::SYMBOL_ALPHABET.to_vec());
+        assert_eq!(config.padding_characters, default::SYMBOL_ALPHABET.to_vec());
         assert_eq!(
-            config.separator_character,
+            config.separator_characters,
             default::SYMBOL_ALPHABET.to_vec()
         );
         assert_eq!(
