@@ -16,7 +16,7 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "config-builder-derive"
-version = "0.1.0"
+version = "0.0.0"
 dependencies = [
  "quote",
  "syn",
@@ -114,7 +114,7 @@ dependencies = [
 
 [[package]]
 name = "strenum-derive"
-version = "0.1.0"
+version = "0.0.0"
 dependencies = [
  "quote",
  "stringcase",
@@ -170,7 +170,7 @@ dependencies = [
 
 [[package]]
 name = "xkcd-password-gen"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "config-builder-derive",
  "getopts",

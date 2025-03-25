@@ -41,10 +41,7 @@ Wordlist courtesy of the Electronic Frontier Foundation
 ### Housekeeping
 
 - test coverage
-- setup a workspace to manage the binary and 2 libs correctly
-- releases w/ signed binaries
-- macros, again
-- start updating Cargo.toml version fields
+- a lil more macro magic
 - make own UnwrapErr for TryRngCore
 
 ## Checklist Before Release

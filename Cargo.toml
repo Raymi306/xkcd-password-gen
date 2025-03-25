@@ -11,7 +11,7 @@ readme = "README.md"
 
 [package]
 name = "xkcd-password-gen"
-version = "0.1.0"
+version = "1.0.0"
 description = "A memorable password generator inspired by XKCD 936"
 categories = ["command-line-utilities"]
 keywords = ["xkcd", "password"]
