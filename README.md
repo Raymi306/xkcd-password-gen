@@ -82,6 +82,7 @@ __24?expanse?PAYCHECK?naturist?STEADIER?08__
 ## Installation
 
 Download the appropriate release for your operating system, or build from scratch.
+With the archive in a directory next to the checksum, `sha256sum -c $CHECKSUM_FILE` can be used to easily validate the archive has not been corrupted.
 
 ### Build
 
