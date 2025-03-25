@@ -1,8 +1,13 @@
 [package]
+publish = false
 name = "strenum-derive"
 version = "0.1.0"
-edition = "2024"
-authors = ["Andrew Langmeier"]
+description = "Reinventing the wheel"
+edition.workspace = true
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+readme = false
 
 [dependencies]
 syn = "2.0"
@@ -12,17 +17,5 @@ stringcase = "0.4"
 [lib]
 proc-macro = true
 
-[lints.rust]
-unsafe_code = { level = "deny", priority = 0 }
-
-[lints.clippy]
-nursery = { level = "warn", priority = -1 }
-style = { level = "warn", priority = -1 }
-pedantic = { level = "warn", priority = -1 }
-complexity = { level = "warn", priority = -1 }
-suspicious = { level = "warn", priority = -1 }
-perf = { level = "warn", priority = -1 }
-correctness = { level = "warn", priority = -1}
-allow_attributes = { level = "forbid", priority = 0 }
-allow_attributes_without_reason = { level = "forbid", priority = 0 }
-unwrap_used = { level = "deny", priority = 0 }
+[lints]
+workspace = true

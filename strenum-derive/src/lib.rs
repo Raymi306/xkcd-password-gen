@@ -1,49 +1,55 @@
-/// Give enums superpowers.
-///
-/// ```
-/// #[derive(StrEnum, Copy, Clone, Debug)]
-/// pub enum RngType {
-///     #[default]
-///     OsRng,
-///     Csprng,
-/// }
-/// ```
-/// expands to:
-/// ```
-/// impl RngType {
-///     pub const fn default_const() -> Self {
-///         Self::OsRng
-///     }
-/// }
-/// impl StrEnum for RngType {
-///     const NAME: &'static str = "RngType";
-///     const NAME_MEMBER_ARR: &[(&'static str, Self)] = &["os-rng", "csprng"];
-///     fn to_static_str(&self) -> &'static str {
-///         match self {
-///             Self::OsRng => "os-rng",
-///             Self::Csprng => "csprng",
-///         }
-///     }
-///     fn into_iter() -> impl Iterator<Item = &'static (&'static str, Self)> {
-///         Self::NAME_MEMBER_ARR.into_iter()
-///     }
-/// }
-/// impl std::fmt::Display for RngType {
-///     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-///         let msg = self.to_static_str();
-///         write!(f, "{msg}")
-///     }
-/// }
-/// impl Default for RngType {
-///     fn default() -> Self { Self::default_const() }
-/// }
+//! Give enums superpowers.
+//!
+//! ```
+//! #[derive(StrEnum, Copy, Clone, Debug)]
+//! pub enum RngType {
+//!     #[default]
+//!     OsRng,
+//!     Csprng,
+//! }
+//! ```
+//! expands to:
+//! ```
+//! impl RngType {
+//!     pub const fn default_const() -> Self {
+//!         Self::OsRng
+//!     }
+//! }
+//! impl StrEnum for RngType {
+//!     const NAME: &'static str = "RngType";
+//!     const NAME_MEMBER_ARR: &[(&'static str, Self)] = &["os-rng", "csprng"];
+//!     fn to_static_str(&self) -> &'static str {
+//!         match self {
+//!             Self::OsRng => "os-rng",
+//!             Self::Csprng => "csprng",
+//!         }
+//!     }
+//!     fn into_iter() -> impl Iterator<Item = &'static (&'static str, Self)> {
+//!         Self::NAME_MEMBER_ARR.into_iter()
+//!     }
+//! }
+//! impl std::fmt::Display for RngType {
+//!     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+//!         let msg = self.to_static_str();
+//!         write!(f, "{msg}")
+//!     }
+//! }
+//! impl Default for RngType {
+//!     fn default() -> Self { Self::default_const() }
+//! }
 use proc_macro::{self, TokenStream};
 
 use quote::quote;
 use stringcase::kebab_case;
 use syn::{DeriveInput, Fields, Ident, Meta, parse_macro_input};
 
-/// Provides StrEnum derive macro
+/// Provides `StrEnum` derive macro
+///
+/// # Panics
+///
+/// Will panic if used on a non-enum.
+/// Will panic if more than one "default" helper attribute is used.
+/// Will panic if used on an enum with non-unit field members.
 #[proc_macro_derive(StrEnum, attributes(default))]
 pub fn derive(input: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(input as DeriveInput);

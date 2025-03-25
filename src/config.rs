@@ -1,5 +1,5 @@
 //! Configuration and validation.
-use config_builder_derive::AutoConfigBuilder;
+use config_builder_derive::ConfigBuilder;
 
 use crate::consts::default;
 use crate::types::Integer;
@@ -38,7 +38,7 @@ pub struct Config {
 }
 
 /// Provide a way in which to create a validated [`Config`].
-#[derive(AutoConfigBuilder, Debug, Default)]
+#[derive(ConfigBuilder, Debug, Default)]
 pub struct ConfigBuilder {
     count: Option<String>,
     word_count: Option<String>,
@@ -202,7 +202,7 @@ mod tests {
             .build()
             .unwrap_err();
         println!("{config_err:?}");
-        let what = matches!(config_err, ValidationError::InvalidNumber(provided, 42, 255) if provided == "41".to_owned());
+        let what = matches!(config_err, ValidationError::InvalidNumber(provided, 42, 255) if provided == *"41");
         assert!(what);
     }
 

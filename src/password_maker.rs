@@ -270,8 +270,8 @@ mod tests {
             maker.config.word_count = 2;
             let indices: [u32; 2] = [1, 2];
             let result = maker.choose_words(&indices);
-            assert_eq!(result[0], expected[i as usize].0);
-            assert_eq!(result[1], expected[i as usize].1);
+            assert_eq!(result[0], expected[i].0);
+            assert_eq!(result[1], expected[i].1);
         }
     }
 

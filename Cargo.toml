@@ -1,13 +1,24 @@
+[workspace]
+resolver = "2"
+members = ["strenum-derive", "config-builder-derive"]
+
+[workspace.package]
+edition = "2024"
+authors = ["Andrew Langmeier"]
+repository = "https://github.com/Raymi306/xkcd-password-gen"
+license = "AGPL-3.0-only"
+readme = "README.md"
+
 [package]
 name = "xkcd-password-gen"
 version = "0.1.0"
-edition = "2024"
-authors = ["Andrew Langmeier"]
 description = "A memorable password generator inspired by XKCD 936"
-repository = "https://github.com/Raymi306/xkcd-password-gen"
 categories = ["command-line-utilities"]
 keywords = ["xkcd", "password"]
-license = "AGPL-3.0-only"
+edition.workspace = true
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
 
 [dependencies]
 rand = "0.9"
@@ -19,15 +30,11 @@ strenum-derive = { path = "strenum-derive" }
 [build-dependencies]
 quote = "1.0"
 
-[workspace]
-resolver = "2"
-members = ["strenum-derive", "config-builder-derive"]
-
-[lints.rust]
+[workspace.lints.rust]
 unsafe_code = { level = "deny", priority = 0 }
 missing_docs = { level = "deny", priority = 0 }
 
-[lints.clippy]
+[workspace.lints.clippy]
 nursery = { level = "warn", priority = -1 }
 style = { level = "warn", priority = -1 }
 pedantic = { level = "warn", priority = -1 }

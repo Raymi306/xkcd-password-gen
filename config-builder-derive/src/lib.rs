@@ -1,34 +1,39 @@
-/// Reduce ConfigBuilder boiler plate.
-///
-/// ```
-/// #[derive(AutoConfigBuilder, Debug, Default)]
-/// pub struct ConfigBuilder {
-///     pub field1: Option<String>,
-///     pub field2: Option<String>,
-/// }
-/// ```
-/// expands to:
-/// ```
-///impl ConfigBuilder {
-///    pub fn field1(mut self, value: Option<String>) -> Self {
-///        self.field1 = value;
-///        self
-///    }
-///    pub fn field2(mut self, value: Option<String>) -> Self {
-///        self.field2 = value;
-///        self
-///    }
-///    pub fn new() -> Self {
-///        Self::default()
-///    }
-///}
+//! Reduce `ConfigBuilder` boiler plate.
+//!
+//! ```
+//! #[derive(ConfigBuilder, Debug, Default)]
+//! pub struct ConfigBuilder {
+//!     pub field1: Option<String>,
+//!     pub field2: Option<String>,
+//! }
+//! ```
+//! expands to:
+//! ```
+//!impl ConfigBuilder {
+//!    pub fn field1(mut self, value: Option<String>) -> Self {
+//!        self.field1 = value;
+//!        self
+//!    }
+//!    pub fn field2(mut self, value: Option<String>) -> Self {
+//!        self.field2 = value;
+//!        self
+//!    }
+//!    pub fn new() -> Self {
+//!        Self::default()
+//!    }
+//!}
 use proc_macro::{self, TokenStream};
 
 use quote::quote;
 use syn::{DeriveInput, Ident, parse_macro_input};
 
-/// Provides AutoConfigBuilder derive macro
-#[proc_macro_derive(AutoConfigBuilder)]
+/// Provides `ConfigBuilder` derive macro
+///
+/// # Panics
+///
+/// Will panic if used on a non-struct.
+/// There is also an unwrap in here that could panic.
+#[proc_macro_derive(ConfigBuilder)]
 pub fn derive(input: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(input as DeriveInput);
     let struct_name = &ast.ident;
