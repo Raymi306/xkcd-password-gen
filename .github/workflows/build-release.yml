@@ -20,11 +20,12 @@ jobs:
       run: cargo fmt --check
     - name: Ensure `cargo clippy` is satisfied
       run: cargo clippy
-    - name: Build and test
+    - name: Test
       run: cargo test --profile small
+    - name: Build
+      run: cargo build --profile small
     - name: Archive release artifact
       uses: actions/upload-artifact@v4
       with:
         name: binary
-        path: |
-          target/small/xkcd-password-gen
+        path: target/small/xkcd-password-gen
