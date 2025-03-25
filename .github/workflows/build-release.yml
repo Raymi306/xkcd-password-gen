@@ -23,10 +23,10 @@ jobs:
     - name: Build and test
       run: cargo test --profile small
     - name: Generate checksum
-      uses: jmgilman/actions-generate-checksum@v1
+      uses: Solratic/checksum-action@v1
       with:
         patterns: target/small/xkcd-password-gen
-        output: target/small/xkcd-passworg-gen.sha256sum
+        suffix: sha256sum
     - name: Archive release artifacts
       uses: actions/upload-artifact@v4
       with:
