@@ -223,10 +223,14 @@ mod tests {
         assert_eq!(result[3], "bee");
     }
 
-    #[ignore = "needs random seeding"]
     #[test]
     fn test_word_transformer_random() {
         let mut rng = SmallRng::seed_from_u64(1);
-        random_upper_lower(&mut rng, vec!["hello".to_owned(), "world".to_owned()]);
+        let result_1 = random_upper_lower(&mut rng, vec!["hello".to_owned(), "world".to_owned()]);
+        assert_eq!("HELLO", &result_1[0]);
+        assert_eq!("WORLD", &result_1[1]);
+        let result_2 = random_upper_lower(&mut rng, vec!["hello".to_owned(), "world".to_owned()]);
+        assert_eq!("hello", &result_2[0]);
+        assert_eq!("WORLD", &result_2[1]);
     }
 }
