@@ -22,8 +22,11 @@ jobs:
       run: cargo clippy
     - name: Build and test
       run: cargo test --profile small
-    - name: sha256sum
-      run: sha256sum xkcd-password-gen >xkcd-password-gen.sha256sum
+    - name: Generate checksum
+      uses: jmgilman/actions-generate-checksum@v1
+      with:
+        patterns: target/small/xkcd-password-gen
+        output: target/small/xkcd-passworg-gen.sha256sum
     - name: Archive release artifacts
       uses: actions/upload-artifact@v4
       with:
