@@ -22,15 +22,9 @@ jobs:
       run: cargo clippy
     - name: Build and test
       run: cargo test --profile small
-    - name: Generate checksum
-      uses: Solratic/checksum-action@v1
-      with:
-        patterns: target/small/xkcd-password-gen
-        suffix: sha256sum
-    - name: Archive release artifacts
+    - name: Archive release artifact
       uses: actions/upload-artifact@v4
       with:
-        name: binary-and-checksum
+        name: binary
         path: |
           target/small/xkcd-password-gen
-          target/small/xkcd-password-gen.sha256sum
