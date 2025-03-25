@@ -1,0 +1,33 @@
+name: build-release-crossplatform
+
+on:
+  workflow_dispatch
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-release-crossplatform:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Ensure `cargo fmt` was run
+      run: cargo fmt --check
+    - name: Ensure `cargo clippy` is satisfied
+      run: cargo clippy
+    - name: Build and test
+      run: cargo test --profile small
+    - name: sha256sum
+      run: sha256sum xkcd-password-gen >xkcd-password-gen.sha256sum
+    - name: Archive release artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: binary-and-checksum
+        path: |
+          target/small/xkcd-password-gen
+          target/small/xkcd-password-gen.sha256sum
