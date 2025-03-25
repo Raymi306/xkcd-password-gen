@@ -40,8 +40,8 @@ Wordlist courtesy of the Electronic Frontier Foundation
 
 ### Housekeeping
 
-- more tests
-- setup a workspace to manage all 3 crates correctly
+- test coverage
+- setup a workspace to manage the binary and 2 libs correctly
 - releases w/ signed binaries
 - macros, again
 - start updating Cargo.toml version fields
@@ -51,7 +51,7 @@ Wordlist courtesy of the Electronic Frontier Foundation
 
 - [ ] README.md up-to-date?
 - [ ] Cargo.toml package version bumped?
-- [ ] `./run_bench.sh` run?
+- [ ] `./run_bench.sh`?
 
 ## Examples ( as of [b08a313](https://github.com/Raymi306/xkcd-password-gen/tree/b08a313bfed1113cc140ebbfe9a050df7abfe8bb) )
 
