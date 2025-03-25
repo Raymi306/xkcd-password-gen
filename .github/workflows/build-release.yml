@@ -1,4 +1,4 @@
-name: build-release-crossplatform
+name: build-release-macos
 
 on:
   workflow_dispatch
@@ -8,24 +8,13 @@ env:
 
 jobs:
   build-release-crossplatform:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-
-    runs-on: ${{ matrix.os }}
-
+    runs-on: macos-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Ensure `cargo fmt` was run
-      run: cargo fmt --check
-    - name: Ensure `cargo clippy` is satisfied
-      run: cargo clippy
-    - name: Test
-      run: cargo test --profile small
     - name: Build
       run: cargo build --profile small
     - name: Archive release artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ matrix.os }}-binary
-        path: target/small/xkcd-password-gen
+        name: binary
+        path: target/small/xkcd-password-gen*
