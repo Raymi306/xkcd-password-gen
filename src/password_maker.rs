@@ -222,6 +222,7 @@ where
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use crate::test_helpers::*;
 
     #[test]
@@ -260,7 +261,179 @@ mod tests {
 
     /// It is possible to incorrectly use rand methods such that
     /// you choose random items but place them in a non-random order.
-    #[ignore = "not written yet"]
     #[test]
-    const fn test_choose_words_result_is_shuffled() {}
+    fn test_choose_words_result_is_shuffled() {
+        let seeds = [3, 9];
+        let expected = [("labor", "hello"), ("hello", "labor")];
+        for i in 0..2 {
+            let mut maker = make_seeded_maker(seeds[i]);
+            maker.config.word_count = 2;
+            let indices: [u32; 2] = [1, 2];
+            let result = maker.choose_words(&indices);
+            assert_eq!(result[0], expected[i as usize].0);
+            assert_eq!(result[1], expected[i as usize].1);
+        }
+    }
+
+    #[test]
+    fn test_transform_words_empty() {
+        let mut maker = make_seeded_maker(1);
+        let v = Vec::new();
+        assert!(maker.transform_words(v).is_empty());
+    }
+
+    #[test]
+    fn test_transform_words_none() {
+        let mut maker = make_seeded_maker(1);
+        maker.config.word_transformation = WordTransformationType::None;
+        let v = vec!["abCD".to_owned()];
+        assert_eq!(v, maker.transform_words(v.clone()));
+    }
+
+    #[test]
+    fn test_choose_n_digits_none() {
+        let mut maker = make_seeded_maker(1);
+        assert!(maker.choose_n_digits(0).is_none());
+    }
+
+    #[test]
+    fn test_choose_n_digits_some() {
+        let mut maker = make_seeded_maker(1);
+        let result = maker.choose_n_digits(3).unwrap();
+        assert_eq!("871".to_owned(), result);
+    }
+
+    #[test]
+    fn test_create_pseudo_words_ok() {
+        let mut maker = make_seeded_maker(1);
+        maker.config.digits_before = 2;
+        maker.config.digits_after = 3;
+        let (left, right) = maker.create_pseudo_words();
+        assert_eq!(left.unwrap(), "87".to_owned());
+        assert_eq!(right.unwrap(), "171".to_owned());
+    }
+
+    #[test]
+    fn test_create_pseudo_words_none_left() {
+        let mut maker = make_seeded_maker(1);
+        maker.config.digits_before = 0;
+        maker.config.digits_after = 3;
+        let (left, right) = maker.create_pseudo_words();
+        assert!(left.is_none());
+        assert_eq!(right.unwrap(), "871".to_owned());
+    }
+
+    #[test]
+    fn test_create_pseudo_words_none_right() {
+        let mut maker = make_seeded_maker(1);
+        maker.config.digits_before = 2;
+        maker.config.digits_after = 0;
+        let (left, right) = maker.create_pseudo_words();
+        assert_eq!(left.unwrap(), "87".to_owned());
+        assert!(right.is_none());
+    }
+    #[test]
+    fn test_choose_separator_default() {
+        let mut maker = make_seeded_maker(1);
+        let result = maker.choose_separator().unwrap();
+        assert_eq!(result, '?');
+    }
+    #[test]
+    fn test_choose_separator_empty() {
+        let mut maker = make_seeded_maker(1);
+        maker.config.separator_character = Vec::new();
+        let result = maker.choose_separator();
+        assert!(result.is_none());
+    }
+    #[test]
+    fn test_create_padding_none() {
+        let mut maker = make_seeded_maker(1);
+        maker.config.padding_type = PaddingType::None;
+        let (left, right) = maker.create_padding("");
+        assert_eq!("", &left.unwrap());
+        assert_eq!("", &right.unwrap());
+    }
+    #[test]
+    fn test_create_padding_defaults() {
+        let mut maker = make_seeded_maker(1);
+        let (left, right) = maker.create_padding("");
+        assert_eq!("??", &left.unwrap());
+        assert_eq!("??", &right.unwrap());
+    }
+    #[test]
+    fn test_create_padding_fixed_custom() {
+        let mut maker = make_seeded_maker(1);
+        maker.config.padding_type = PaddingType::Fixed;
+        maker.config.padding_length = 3;
+        let (left, right) = maker.create_padding("");
+        assert_eq!("???", &left.unwrap());
+        assert_eq!("???", &right.unwrap());
+    }
+
+    #[test]
+    fn test_create_padding_fixed_empty() {
+        let mut maker = make_seeded_maker(1);
+        maker.config.padding_type = PaddingType::Fixed;
+        maker.config.padding_character = Vec::new();
+        let (left, right) = maker.create_padding("");
+        assert!(left.is_none());
+        assert!(right.is_none());
+    }
+    #[test]
+    fn test_create_padding_fixed_no_padding_length() {
+        let mut maker = make_seeded_maker(1);
+        maker.config.padding_type = PaddingType::Fixed;
+        maker.config.padding_length = 0;
+        let (left, right) = maker.create_padding("");
+        assert_eq!("", &left.unwrap());
+        assert_eq!("", &right.unwrap());
+    }
+    #[test]
+    fn test_create_padding_adaptive_empty() {
+        let mut maker = make_seeded_maker(1);
+        maker.config.padding_type = PaddingType::Adaptive;
+        maker.config.padding_character = Vec::new();
+        let (left, right) = maker.create_padding("");
+        assert_eq!("", &left.unwrap());
+        assert!(right.is_none());
+    }
+    #[test]
+    fn test_create_padding_adaptive_no_change() {
+        let mut maker = make_seeded_maker(1);
+        maker.config.padding_type = PaddingType::Adaptive;
+        maker.config.padding_length = 1;
+        let (left, right) = maker.create_padding("Hello");
+        assert_eq!("", &left.unwrap());
+        assert_eq!("", &right.unwrap());
+    }
+    #[test]
+    fn test_create_padding_adaptive_ok() {
+        let mut maker = make_seeded_maker(1);
+        maker.config.padding_type = PaddingType::Adaptive;
+        maker.config.padding_length = 10;
+        let (left, right) = maker.create_padding("Hello");
+        assert_eq!("", &left.unwrap());
+        assert_eq!("?????", &right.unwrap());
+    }
+    #[test]
+    fn test_create_password_default() {
+        let mut maker = make_seeded_maker_big_list(1);
+        let password = maker.create_password();
+        assert_eq!("$$15@startling@SHAFT@cactus@SHACK@95$$", &password);
+    }
+    #[test]
+    fn test_create_passwords_default() {
+        let mut maker = make_seeded_maker_big_list(1);
+        let passwords = maker.create_passwords();
+        assert_eq!("$$15@startling@SHAFT@cactus@SHACK@95$$", &passwords[0]);
+    }
+    #[test]
+    fn test_create_3_passwords() {
+        let mut maker = make_seeded_maker_big_list(1);
+        maker.config.count = 3;
+        let passwords = maker.create_passwords();
+        assert_eq!("$$15@startling@SHAFT@cactus@SHACK@95$$", &passwords[0]);
+        assert_eq!("::01;uniquely;FOOTBALL;blissful;GUSH;54::", &passwords[1]);
+        assert_eq!("~~26:dutiful:SPINACH:cone:HEADROOM:19~~", &passwords[2]);
+    }
 }

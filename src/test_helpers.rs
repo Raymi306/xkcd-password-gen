@@ -1,9 +1,9 @@
 //! Shared testing functionality.
 #![cfg(test)]
-/*
- * provides:
- * static WORDLIST: &[&str] = &[...]
- */
+
+//provides:
+//static WORDLIST: &[&str] = &[...]
+
 include!(concat!(env!("OUT_DIR"), "/wordlist.rs"));
 
 use rand::SeedableRng;
@@ -13,8 +13,18 @@ use rand::rngs::SmallRng;
 use crate::config::ConfigBuilder;
 use crate::password_maker::PasswordMaker;
 
-/// Makes a [`PasswordMaker`] with reproducible random output.
+/// Makes a [`PasswordMaker`] with reproducible random output and a small wordlist.
 pub fn make_seeded_maker(seed: u64) -> PasswordMaker<SmallRng> {
+    let rng = SmallRng::seed_from_u64(seed).unwrap_err();
+    PasswordMaker {
+        rng,
+        config: ConfigBuilder::new().build().unwrap(),
+        wordlist: make_wordlist(),
+    }
+}
+
+/// Makes a [`PasswordMaker`] with reproducible random output and a real wordlist.
+pub fn make_seeded_maker_big_list(seed: u64) -> PasswordMaker<SmallRng> {
     let rng = SmallRng::seed_from_u64(seed).unwrap_err();
     PasswordMaker {
         rng,
