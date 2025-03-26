@@ -14,8 +14,8 @@ pub trait Integer: std::str::FromStr + Into<MinimalSupportedInteger> + PartialOr
 ///
 /// # Example
 /// ```
-/// impl Integer for u8 {}
-/// type MinimalSupportedInteger = u16
+/// // impl Integer for u8 {}
+/// // type MinimalSupportedInteger = u16;
 /// ```
 impl Integer for MinimalSupportedInteger {}
 
@@ -92,7 +92,7 @@ where
 // }
 
 /// The different ways words can be transformed.
-#[derive(StrEnum, Copy, Clone, Debug)]
+#[derive(StrEnum, Copy, Clone, Debug, PartialEq)]
 pub enum WordTransformationType {
     None,
     /// correct horse battery staple
@@ -115,7 +115,7 @@ pub enum WordTransformationType {
 }
 
 /// The different ways padding can be applied.
-#[derive(StrEnum, Copy, Clone, Debug)]
+#[derive(StrEnum, Copy, Clone, Debug, PartialEq)]
 pub enum PaddingType {
     None,
     /// add padding-length padding-characters to front and back

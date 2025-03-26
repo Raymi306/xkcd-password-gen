@@ -25,19 +25,12 @@ use getopts::Options;
 use rand::rngs::OsRng;
 use rand::rngs::ThreadRng;
 
-mod config;
-mod consts;
-mod password_maker;
-mod test_helpers;
-mod types;
-mod word_transformer;
-
-use config::ConfigBuilder;
-use consts::default;
-use password_maker::PasswordMaker;
-use types::PaddingType;
-use types::RngType;
-use types::WordTransformationType;
+use xkcd_password_gen::config::ConfigBuilder;
+use xkcd_password_gen::consts::default;
+use xkcd_password_gen::password_maker::PasswordMaker;
+use xkcd_password_gen::types::PaddingType;
+use xkcd_password_gen::types::RngType;
+use xkcd_password_gen::types::WordTransformationType;
 
 /// The entrypoint.
 ///
