@@ -1,4 +1,7 @@
 name: cargo-audit
+permissions:
+  issues: write
+  checks: write
 on:
   schedule:
     - cron: '0 0 * * *'
