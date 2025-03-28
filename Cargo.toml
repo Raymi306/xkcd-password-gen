@@ -27,6 +27,8 @@ path = "src/gui/main.rs"
 
 [dependencies]
 eframe = "0.31"
+egui_extras = { version = "0.31", features = ["image"] }
+image = { version = "0.25", features = ["png"] }
 getopts = "0.2"
 rand = "0.9"
 rand_core = "0.9"

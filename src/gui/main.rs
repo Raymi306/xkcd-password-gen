@@ -3,6 +3,8 @@
 // static WORDLIST: &[&str] = &[...]
 include!(concat!(env!("OUT_DIR"), "/wordlist.rs"));
 
+use std::sync::Arc;
+
 use eframe::egui;
 use egui::Color32;
 use egui::RichText;
@@ -229,15 +231,20 @@ impl eframe::App for App {
 }
 
 fn main() -> eframe::Result {
+    let icon = eframe::icon_data::from_png_bytes(include_bytes!("../../icon.png")).unwrap();
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_min_inner_size([MIN_WIDTH, MIN_HEIGHT])
-            .with_inner_size([MIN_WIDTH, MIN_HEIGHT]),
+            .with_inner_size([MIN_WIDTH, MIN_HEIGHT])
+            .with_icon(Arc::new(icon)),
         ..Default::default()
     };
     eframe::run_native(
         "fmn-passgen",
         options,
-        Box::new(|cc| Ok(Box::new(App::new(cc)))),
+        Box::new(|cc| {
+            egui_extras::install_image_loaders(&cc.egui_ctx);
+            Ok(Box::new(App::new(cc)))
+        }),
     )
 }
