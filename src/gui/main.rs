@@ -3,6 +3,7 @@
 include!(concat!(env!("OUT_DIR"), "/wordlist.rs"));
 
 use eframe::egui;
+use egui::RichText;
 use egui::Color32;
 use rand::Rng;
 use rand::SeedableRng;
@@ -73,32 +74,35 @@ impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
             egui::ScrollArea::both().show(ui, |ui| {
-                ui.horizontal(|ui| {
-                    let response = ui.add_sized(
-                        [160.0, 17.0],
-                        egui::TextEdit::singleline(&mut self.seed_string),
-                    );
-                    if response.changed() {
-                        if let Ok(seed) = self.seed_string.parse::<u64>() {
-                            self.curr_seed = seed;
-                        } else {
-                            self.seed_string = self.curr_seed.to_string();
+                egui::CollapsingHeader::new(RichText::new("PREVIEW").color(Color32::ORANGE))
+                    .default_open(true)
+                    .show(ui, |ui| {
+                        ui.horizontal(|ui| {
+                            let response = ui.add_sized(
+                                [160.0, 17.0],
+                                egui::TextEdit::singleline(&mut self.seed_string),
+                            );
+                            if response.changed() {
+                                if let Ok(seed) = self.seed_string.parse::<u64>() {
+                                    self.curr_seed = seed;
+                                } else {
+                                    self.seed_string = self.curr_seed.to_string();
+                                }
+                            }
+                            if ui.button("random seed").clicked() {
+                                self.curr_seed = self.password_maker.rng.random();
+                                self.seed_string = self.curr_seed.to_string();
+                            }
+                        });
+                        if self.config_curr != self.config_prev || self.curr_seed != self.prev_seed {
+                            self.preview_maker.rng = SmallRng::seed_from_u64(self.curr_seed).unwrap_err();
+                            self.preview_maker.config = self.config_curr.clone();
+                            self.preview = self.preview_maker.make_password();
+                            self.config_prev = self.config_curr.clone();
+                            self.prev_seed = self.curr_seed;
                         }
-                    }
-                    if ui.button("random seed").clicked() {
-                        self.curr_seed = self.password_maker.rng.random();
-                        self.seed_string = self.curr_seed.to_string();
-                    }
-                });
-                if self.config_curr != self.config_prev || self.curr_seed != self.prev_seed {
-                    self.preview_maker.rng = SmallRng::seed_from_u64(self.curr_seed).unwrap_err();
-                    self.preview_maker.config = self.config_curr.clone();
-                    self.preview = self.preview_maker.make_password();
-                    self.config_prev = self.config_curr.clone();
-                    self.prev_seed = self.curr_seed;
-                }
-                ui.colored_label(Color32::ORANGE, "PREVIEW");
-                ui.label(&self.preview);
+                        ui.label(&self.preview);
+                    });
                 egui::CollapsingHeader::new("words")
                     .default_open(true)
                     .show(ui, |ui| {
@@ -118,10 +122,11 @@ impl eframe::App for App {
                             )
                             .text("max length"),
                         );
-                        egui::ComboBox::from_label("transformation")
+                        egui::ComboBox::from_label("transform")
                             .selected_text(self.config_curr.word_transformation.to_static_str())
                             .show_ui(ui, |ui| {
                                 for (description, item) in WordTransformationType::NAME_MEMBER_ARR {
+                                    ui.style_mut().spacing.item_spacing = egui::vec2(3.0, 3.0);
                                     ui.selectable_value(
                                         &mut self.config_curr.word_transformation,
                                         *item,
@@ -158,6 +163,7 @@ impl eframe::App for App {
                             .selected_text(self.config_curr.padding_type.to_static_str())
                             .show_ui(ui, |ui| {
                                 for (description, item) in PaddingType::NAME_MEMBER_ARR {
+                                    ui.style_mut().spacing.item_spacing = egui::vec2(3.0, 3.0);
                                     ui.selectable_value(
                                         &mut self.config_curr.padding_type,
                                         *item,
