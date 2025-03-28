@@ -213,7 +213,7 @@ impl App {
                 if ui.button("📋").clicked() {
                     ctx.copy_text(item.clone());
                 }
-                ui.add(egui::Label::new(item).selectable(true));
+                ui.add(egui::Label::new(item).selectable(true).wrap());
             });
         }
         ui.allocate_space(ui.available_size());
@@ -223,7 +223,7 @@ impl App {
 impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
-            egui::ScrollArea::both().show(ui, |ui| self.show_inner(ui, ctx));
+            egui::ScrollArea::vertical().show(ui, |ui| self.show_inner(ui, ctx));
         });
     }
 }
