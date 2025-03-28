@@ -1,3 +1,4 @@
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 // provides:
 // static WORDLIST: &[&str] = &[...]
 include!(concat!(env!("OUT_DIR"), "/wordlist.rs"));
@@ -76,7 +77,7 @@ impl App {
         }
     }
     fn show_inner(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
-        egui::CollapsingHeader::new(RichText::new("PREVIEW").color(Color32::ORANGE))
+        egui::CollapsingHeader::new("preview")
             .default_open(true)
             .show(ui, |ui| {
                 ui.horizontal(|ui| {
@@ -103,7 +104,7 @@ impl App {
                     self.config_prev = self.config_curr.clone();
                     self.prev_seed = self.curr_seed;
                 }
-                ui.label(&self.preview);
+                ui.label(RichText::new(&self.preview).color(Color32::ORANGE));
             });
         egui::CollapsingHeader::new("words")
             .default_open(true)
