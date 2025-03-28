@@ -1,21 +1,32 @@
-# xkcd-password-gen
+# ![Forget-me-not Flower Icon](icon.png) fmn-passgen ![cargo-audit](https://github.com/Raymi306/xkcd-password-gen/actions/workflows/audit.yml/badge.svg)
+*Forget-me-not Password Generator*
 
-![cargo-audit](https://github.com/Raymi306/xkcd-password-gen/actions/workflows/audit.yml/badge.svg)
+Every password you use should be randomly generated and secured by a password manager.
 
-[![xkcd 936 image](https://imgs.xkcd.com/comics/password_strength_2x.png)](https://xkcd.com/936/)
+However, you may find yourself in need of a password to protect the password manager.
+
+`fmn-passgen` can generate strong passwords that can be easier to type and remember than a shorter entirely random password.
+
+The default settings require memorization of 2 random symbols, 2 digits, and 4 words with a simple mixture of capital and lowercase letters:
+
+`:unending=RUST=stumble=OUTSKIRTS=94:`
+
+This should require less time to memorize than an equivalently strong password of random characters, while also being faster and less error-prone to enter for individuals comfortable with typing.
+These settings can be easily adjusted to change the memorability and strength of the generated passwords.
+
+Note that if you are a slow typer and you do not need the password to be memorable, a standard randomly generated password can provide equivalent protection with less overall length.
 
 ## Inspiration
-
+- [xkcd 936](https://xkcd.com/936/)
 - https://www.xkpasswd.net/
-- https://metacpan.org/pod/Crypt::HSXKPasswd
-
-If you need a memorable password quick, I have used [www.xkpasswd.net](https://www.xkpasswd.net) for some time now.
-I decided I wanted to write my own take on their password generator that I can compile to a small binary.
 
 ## Resources
 
 Wordlist courtesy of the Electronic Frontier Foundation
 - https://www.eff.org/files/2016/07/18/eff_large_wordlist.txt
+
+Logo by iiintangible
+- https://tenderlo.in
 
 ## Examples
 
@@ -23,7 +34,7 @@ Wordlist courtesy of the Electronic Frontier Foundation
 Usage: target/debug/xkcd-password-gen [options]
 
 Options:
-    -h, --help          
+    -h, --help
     -c, --count NUM, default=1
                         how many passwords to make
     -w, --word-count NUM, default=4
@@ -34,13 +45,13 @@ Options:
                         maximum length of a chosen word
     -W, --word-transformation TYPE, default=alternating-lower-upper
                         transformation to apply to the selected words
-    -b, --digits-before NUM, default=2
+    -b, --digits-before NUM, default=0
                         number of digits to prepend
     -a, --digits-after NUM, default=2
                         number of digits to append
     -T, --padding-type TYPE, default=fixed
                         how to apply padding
-    -l, --padding-length NUM, default=2 for fixed, 42 for adaptive
+    -l, --padding-length NUM, default=1 for fixed, 42 for adaptive
                         how much to pad
     -p, --padding-characters CHOICES, default="!@$%^&*-_+=:|~?/.;"
                         list of characters to choose from
@@ -74,25 +85,41 @@ RNG TYPES:
 
 ```
 $ xkcd-password-gen -c 3
-||47@amicably@JUDGE@enlarged@DECK@11||
-~~12_satisfied_KINSHIP_purebred_ESSAY_70~~
-__24?expanse?PAYCHECK?naturist?STEADIER?08__
+?emblem|DOORMAN|luckiness|BROADNESS|19?
+=obsessed@CIRCULATE@epidemic@SPOTTED@90=
+!blouse|CHANNEL|venture|XEROX|79!
 ```
 
 ## Installation
 
 Download the appropriate release for your operating system, or build from scratch.
-With the archive in a directory next to the checksum, `sha256sum -c $CHECKSUM_FILE` can be used to easily validate the archive has not been corrupted.
+The checksum can be used to easily validate that the archive has not been corrupted or tampered with.
 
-### Build
+On most Linux systems, you can validate the archive by running `sha256sum -c $CHECKSUM_FILE` when the checksum and the archive are in the same directory.
+
+### Building from Scratch
 
 1. https://www.rust-lang.org/tools/install
-2. `cargo build --profile small`
+2. `git clone` or otherwise acquire the source code for this project.
+3. `cargo build --profile small`
 
-## Dependencies
+## Core Dependencies
 
 - rand = "0.9" [(docs)](https://docs.rs/rand/latest/rand/)
+- rand_core = "0.9" [(docs)](https://docs.rs/rand_core/latest/rand_core/)
 - getopts = "0.2" [(docs)](https://docs.rs/getopts/latest/getopts/)
+
+## GUI Dependencies
+
+- eframe = "0.31" [(docs)](https://docs.rs/eframe/latest/eframe/), [(egui docs)](https://docs.rs/egui/latest/egui/index.html)
+- egui_extras = "0.31" [(docs)](https://docs.rs/egui_extras/latest/egui_extras/)
+- ~~image = "0.25"~~ - *for adding png support to egui_extra in order to load the icon*
+
+## [Benchmarks](benchmarks)
+
+### Tooling
+
+[hyperfine](https://github.com/sharkdp/hyperfine)
 
 ## TODO
 
@@ -103,9 +130,8 @@ With the archive in a directory next to the checksum, `sha256sum -c $CHECKSUM_FI
 - statistics (entropy)
 - custom wordlists
 - feature flag to not include default wordlist
-- gui feature flag
 - short/long help or manpage
-- explore reducing binary size more in "small" profile
+- explore reducing binary sizes more
 - symmetrical padding option, eg `*#$[PASSWORD]$#*`
 - additional CSPRNG options under feature flags?
 - dice RNG feature flag
@@ -122,12 +148,3 @@ With the archive in a directory next to the checksum, `sha256sum -c $CHECKSUM_FI
 - [ ] README.md up-to-date?
 - [ ] Cargo.toml package version bumped?
 - [ ] `./run_bench.sh`?
-## [Benchmarks](benchmarks)
-
-Kind of silly to measure time given that this isn't an application where performance is critical, but still fun.
-
-Binary size is more relevant.
-
-### Tooling
-
-[hyperfine](https://github.com/sharkdp/hyperfine)
