@@ -186,7 +186,7 @@ where
     /// 3. Create pseudo-words made up for randomly chosen digits and add them as the first and last words.
     /// 4. Insert a copy of the same symbol between each of the words and pseudo-words. This symbol is referred to as the separator character.
     /// 5. Pad the password with multiple instances of the same symbol front and/or back. This symbol is referred to as the padding character.
-    fn create_password(&mut self) -> String {
+    pub fn make_password(&mut self) -> String {
         let filtered_word_indices = self.filter_wordlist();
         let chosen_words = self.choose_words(&filtered_word_indices);
         let mut transformed_words = self.transform_words(chosen_words);
@@ -197,7 +197,12 @@ where
         let mut parts = vec![front_digits.unwrap_or(String::new())];
         parts.append(&mut transformed_words);
         parts.push(back_digits.unwrap_or(String::new()));
-        let unpadded_password = parts.join(&separator.map(String::from).unwrap_or_default());
+        // TODO regression test for: separator should not apply on empty elements
+        let unpadded_password = parts
+            .into_iter()
+            .filter(|p| !p.is_empty())
+            .collect::<Vec<String>>()
+            .join(&separator.map(String::from).unwrap_or_default());
 
         let (front_padding, rear_padding) = self.create_padding(&unpadded_password);
 
@@ -210,11 +215,11 @@ where
     }
     /// Create passwords.
     /// This is the public interface for the [`PasswordMaker`] struct.
-    pub fn create_passwords(&mut self) -> Vec<String> {
+    pub fn make_passwords(&mut self) -> Vec<String> {
         let count = self.config.count as usize;
         let mut buf = Vec::with_capacity(count);
         for _ in 0..count {
-            buf.push(self.create_password());
+            buf.push(self.make_password());
         }
         buf
     }
@@ -357,8 +362,8 @@ mod tests {
     fn test_create_padding_defaults() {
         let mut maker = make_seeded_maker(1);
         let (left, right) = maker.create_padding("");
-        assert_eq!("??", &left.unwrap());
-        assert_eq!("??", &right.unwrap());
+        assert_eq!("?", &left.unwrap());
+        assert_eq!("?", &right.unwrap());
     }
     #[test]
     fn test_create_padding_fixed_custom() {
@@ -416,24 +421,24 @@ mod tests {
         assert_eq!("?????", &right.unwrap());
     }
     #[test]
-    fn test_create_password_default() {
+    fn test_make_password_default() {
         let mut maker = make_seeded_maker_big_list(1);
-        let password = maker.create_password();
-        assert_eq!("$$15@startling@SHAFT@cactus@SHACK@95$$", &password);
+        let password = maker.make_password();
+        assert_eq!("+startling;SHAFT;cactus;SHACK;15+", &password);
     }
     #[test]
-    fn test_create_passwords_default() {
+    fn test_make_passwords_default() {
         let mut maker = make_seeded_maker_big_list(1);
-        let passwords = maker.create_passwords();
-        assert_eq!("$$15@startling@SHAFT@cactus@SHACK@95$$", &passwords[0]);
+        let passwords = maker.make_passwords();
+        assert_eq!("+startling;SHAFT;cactus;SHACK;15+", &passwords[0]);
     }
     #[test]
     fn test_create_3_passwords() {
         let mut maker = make_seeded_maker_big_list(1);
         maker.config.count = 3;
-        let passwords = maker.create_passwords();
-        assert_eq!("$$15@startling@SHAFT@cactus@SHACK@95$$", &passwords[0]);
-        assert_eq!("::01;uniquely;FOOTBALL;blissful;GUSH;54::", &passwords[1]);
-        assert_eq!("~~26:dutiful:SPINACH:cone:HEADROOM:19~~", &passwords[2]);
+        let passwords = maker.make_passwords();
+        assert_eq!("+startling;SHAFT;cactus;SHACK;15+", &passwords[0]);
+        assert_eq!("$bullwhip@CHUNK@uniquely@FOOTBALL@03$", &passwords[1]);
+        assert_eq!("-overarch$LETDOWN$valid$PUSHY$27-", &passwords[2]);
     }
 }

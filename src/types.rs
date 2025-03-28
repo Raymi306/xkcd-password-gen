@@ -126,7 +126,7 @@ pub enum PaddingType {
 }
 
 /// The different random number generator options.
-#[derive(StrEnum, Copy, Clone, Debug)]
+#[derive(StrEnum, Copy, Clone, Debug, PartialEq)]
 pub enum RngType {
     /// the system's native secure RNG
     #[default]

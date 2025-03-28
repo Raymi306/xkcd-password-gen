@@ -9,7 +9,7 @@ use crate::types::StrEnum;
 use crate::types::ValidationError;
 use crate::types::WordTransformationType;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Config {
     /// how many passwords to make
     pub count: u8,

@@ -188,8 +188,8 @@ fn main() -> ExitCode {
         }
         Ok(config) => {
             let result = match config.rng_type {
-                RngType::OsRng => PasswordMaker::<OsRng>::new(config).create_passwords(),
-                RngType::Csprng => PasswordMaker::<ThreadRng>::new(config).create_passwords(),
+                RngType::OsRng => PasswordMaker::<OsRng>::new(config).make_passwords(),
+                RngType::Csprng => PasswordMaker::<ThreadRng>::new(config).make_passwords(),
             };
             for password in result {
                 println!("{password}");
