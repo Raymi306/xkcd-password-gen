@@ -111,7 +111,7 @@ On most Linux systems, you can validate the archive by running `sha256sum -c $CH
 
 ## GUI Dependencies
 
-- eframe = "0.31" [(docs)](https://docs.rs/eframe/latest/eframe/), [(egui docs)](https://docs.rs/egui/latest/egui/index.html)
+- eframe = "0.31" [(eframe docs)](https://docs.rs/eframe/latest/eframe/) [(egui docs)](https://docs.rs/egui/latest/egui/index.html)
 - egui_extras = "0.31" [(docs)](https://docs.rs/egui_extras/latest/egui_extras/)
 - ~~image = "0.25"~~ - *for adding png support to egui_extra in order to load the icon*
 

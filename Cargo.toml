@@ -10,25 +10,30 @@ license = "AGPL-3.0-only"
 readme = "README.md"
 
 [package]
-name = "xkcd-password-gen"
-version = "1.0.0"
-description = "A memorable password generator inspired by XKCD 936"
+name = "fmn-passgen"
+version = "1.1.0"
+description = "A memorable password generator"
 categories = ["command-line-utilities"]
-keywords = ["xkcd", "password"]
+keywords = ["password"]
 edition.workspace = true
 authors.workspace = true
 repository.workspace = true
 license.workspace = true
-default-run = "xkcd-password-gen"
+default-run = "fmn-passgen"
+
+[features]
+default = []
+gui = ["dep:eframe", "dep:egui_extras", "dep:image"]
 
 [[bin]]
-name = "gui"
+name = "fmn-passgen-gui"
 path = "src/gui/main.rs"
+required-features = ["gui"]
 
 [dependencies]
-eframe = "0.31"
-egui_extras = { version = "0.31", features = ["image"] }
-image = { version = "0.25", features = ["png"] }
+eframe = { version = "0.31", optional = true }
+egui_extras = { version = "0.31", features = ["image"], optional = true }
+image = { version = "0.25", features = ["png"], optional = true }
 getopts = "0.2"
 rand = "0.9"
 rand_core = "0.9"

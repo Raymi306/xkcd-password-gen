@@ -1195,6 +1195,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "fmn-passgen"
+version = "1.1.0"
+dependencies = [
+ "config-builder-derive",
+ "eframe",
+ "egui_extras",
+ "getopts",
+ "image",
+ "quote",
+ "rand 0.9.0",
+ "rand_core 0.9.3",
+ "strenum-derive",
+]
+
+[[package]]
 name = "foldhash"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4241,21 +4256,6 @@ dependencies = [
  "log",
  "once_cell",
  "xkeysym",
-]
-
-[[package]]
-name = "xkcd-password-gen"
-version = "1.0.0"
-dependencies = [
- "config-builder-derive",
- "eframe",
- "egui_extras",
- "getopts",
- "image",
- "quote",
- "rand 0.9.0",
- "rand_core 0.9.3",
- "strenum-derive",
 ]
 
 [[package]]

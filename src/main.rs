@@ -25,12 +25,12 @@ use getopts::Options;
 use rand::rngs::OsRng;
 use rand::rngs::ThreadRng;
 
-use xkcd_password_gen::config::ConfigBuilder;
-use xkcd_password_gen::consts::default;
-use xkcd_password_gen::password_maker::PasswordMaker;
-use xkcd_password_gen::types::PaddingType;
-use xkcd_password_gen::types::RngType;
-use xkcd_password_gen::types::WordTransformationType;
+use fmn_passgen::config::ConfigBuilder;
+use fmn_passgen::consts::default;
+use fmn_passgen::password_maker::PasswordMaker;
+use fmn_passgen::types::PaddingType;
+use fmn_passgen::types::RngType;
+use fmn_passgen::types::WordTransformationType;
 
 /// The entrypoint.
 ///

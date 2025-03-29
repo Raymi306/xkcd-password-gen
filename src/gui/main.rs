@@ -14,12 +14,12 @@ use rand::TryRngCore;
 use rand::rngs::OsRng;
 use rand::rngs::SmallRng;
 
-use xkcd_password_gen::config::Config;
-use xkcd_password_gen::config::ConfigBuilder;
-use xkcd_password_gen::password_maker::PasswordMaker;
-use xkcd_password_gen::types::PaddingType;
-use xkcd_password_gen::types::StrEnum;
-use xkcd_password_gen::types::WordTransformationType;
+use fmn_passgen::config::Config;
+use fmn_passgen::config::ConfigBuilder;
+use fmn_passgen::password_maker::PasswordMaker;
+use fmn_passgen::types::PaddingType;
+use fmn_passgen::types::StrEnum;
+use fmn_passgen::types::WordTransformationType;
 
 const INITIAL_SEED: u64 = 13414357264162109690;
 const MIN_WIDTH: f32 = 400.0;
