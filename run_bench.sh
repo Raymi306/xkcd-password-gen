@@ -13,8 +13,8 @@ SHORTCOMMIT="$(git rev-parse --short HEAD)"
 
 cargo build --profile release
 cargo build --profile small
-cargo build --profile --features gui --bin fmn-passgen-gui release
-cargo build --profile --features gui --bin fmn-passgen-gui small
+cargo build --profile release --features gui --bin fmn-passgen-gui
+cargo build --profile small --features gui --bin fmn-passgen-gui
 
 TMPFILE="$(basename $0)".md.tmp
 hyperfine --export-markdown $TMPFILE --warmup 3 'target/release/fmn-passgen -c 255 > /dev/null' 'target/small/fmn-passgen -c 255 > /dev/null'
