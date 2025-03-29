@@ -124,6 +124,8 @@ On most Linux systems, you can validate the archive by running `sha256sum -c $CH
 
 ## [Benchmarks](benchmarks)
 
+Benchmarks are run on my local machine, inside an Ubuntu 22 WSL2 VM.
+
 ### Tooling
 
 [hyperfine](https://github.com/sharkdp/hyperfine)
