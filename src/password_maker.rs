@@ -54,6 +54,7 @@ impl<T> PasswordMaker<T>
 where
     T: TryRngCore + Default,
 {
+    #[must_use]
     pub fn new(config: Config) -> Self {
         Self {
             rng: T::default().unwrap_err(),
