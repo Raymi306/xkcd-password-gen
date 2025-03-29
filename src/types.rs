@@ -92,7 +92,7 @@ where
 // }
 
 /// The different ways words can be transformed.
-#[derive(StrEnum, Copy, Clone, Debug, PartialEq)]
+#[derive(StrEnum, Copy, Clone, Debug, PartialEq, Eq)]
 pub enum WordTransformationType {
     None,
     /// correct horse battery staple
@@ -115,7 +115,7 @@ pub enum WordTransformationType {
 }
 
 /// The different ways padding can be applied.
-#[derive(StrEnum, Copy, Clone, Debug, PartialEq)]
+#[derive(StrEnum, Copy, Clone, Debug, PartialEq, Eq)]
 pub enum PaddingType {
     None,
     /// add padding-length padding-characters to front and back
@@ -126,7 +126,7 @@ pub enum PaddingType {
 }
 
 /// The different random number generator options.
-#[derive(StrEnum, Copy, Clone, Debug, PartialEq)]
+#[derive(StrEnum, Copy, Clone, Debug, PartialEq, Eq)]
 pub enum RngType {
     /// the system's native secure RNG
     #[default]
@@ -137,6 +137,7 @@ pub enum RngType {
 
 #[cfg(test)]
 mod test {
+    #![allow(clippy::unwrap_used, reason = "testing")]
     use super::*;
     use std::mem::discriminant;
 

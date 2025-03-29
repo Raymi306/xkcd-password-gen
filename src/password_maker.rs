@@ -54,6 +54,7 @@ impl<T> PasswordMaker<T>
 where
     T: TryRngCore + Default,
 {
+    #[must_use]
     pub fn new(config: Config) -> Self {
         Self {
             rng: T::default().unwrap_err(),
@@ -227,6 +228,7 @@ where
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::unwrap_used, reason = "testing")]
     use super::*;
     use crate::test_helpers::*;
 
