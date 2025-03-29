@@ -13,8 +13,8 @@ pub mod default {
     pub const WORD_COUNT: u8 = 4;
     pub const WORD_MIN_LENGTH: u8 = 3;
     pub const WORD_MAX_LENGTH: u8 = 11;
-    pub const DIGITS_BEFORE: u8 = 2;
+    pub const DIGITS_BEFORE: u8 = 0;
     pub const DIGITS_AFTER: u8 = 2;
-    pub const PADDING_LENGTH_FIXED: u8 = 2;
+    pub const PADDING_LENGTH_FIXED: u8 = 1;
     pub const PADDING_LENGTH_ADAPTIVE: u8 = 42;
 }

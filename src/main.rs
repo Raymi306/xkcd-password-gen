@@ -25,19 +25,12 @@ use getopts::Options;
 use rand::rngs::OsRng;
 use rand::rngs::ThreadRng;
 
-mod config;
-mod consts;
-mod password_maker;
-mod test_helpers;
-mod types;
-mod word_transformer;
-
-use config::ConfigBuilder;
-use consts::default;
-use password_maker::PasswordMaker;
-use types::PaddingType;
-use types::RngType;
-use types::WordTransformationType;
+use fmn_passgen::config::ConfigBuilder;
+use fmn_passgen::consts::default;
+use fmn_passgen::password_maker::PasswordMaker;
+use fmn_passgen::types::PaddingType;
+use fmn_passgen::types::RngType;
+use fmn_passgen::types::WordTransformationType;
 
 /// The entrypoint.
 ///
@@ -195,8 +188,8 @@ fn main() -> ExitCode {
         }
         Ok(config) => {
             let result = match config.rng_type {
-                RngType::OsRng => PasswordMaker::<OsRng>::new(config).create_passwords(),
-                RngType::Csprng => PasswordMaker::<ThreadRng>::new(config).create_passwords(),
+                RngType::OsRng => PasswordMaker::<OsRng>::new(config).make_passwords(),
+                RngType::Csprng => PasswordMaker::<ThreadRng>::new(config).make_passwords(),
             };
             for password in result {
                 println!("{password}");

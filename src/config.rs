@@ -9,7 +9,7 @@ use crate::types::StrEnum;
 use crate::types::ValidationError;
 use crate::types::WordTransformationType;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Config {
     /// how many passwords to make
     pub count: u8,
@@ -37,6 +37,12 @@ pub struct Config {
     pub rng_type: RngType,
 }
 
+impl Default for Config {
+    fn default() -> Self {
+        ConfigBuilder::new().build().unwrap()
+    }
+}
+
 /// Provide a way in which to create a validated [`Config`].
 #[derive(ConfigBuilder, Debug, Default)]
 pub struct ConfigBuilder {
@@ -56,7 +62,7 @@ pub struct ConfigBuilder {
 
 /// Ensure an [`Integer`] is between `min` and `max`.
 /// If no `value` is provided, return `default`
-fn validate_int<T: Integer>(
+pub fn validate_int<T: Integer>(
     value: Option<String>,
     min: T,
     max: T,
@@ -85,7 +91,7 @@ fn validate_int<T: Integer>(
 
 /// Ensure `value` references a valid [`StrEnum`] member.
 /// If no `value` is provided, return `default`
-fn validate_enum<T: StrEnum>(value: Option<String>) -> Result<T, ValidationError> {
+pub fn validate_enum<T: StrEnum>(value: Option<String>) -> Result<T, ValidationError> {
     #[expect(clippy::or_fun_call, reason = "Function call is not expensive.")]
     value.map_or(Ok(T::default()), |inner| {
         T::to_member(&inner.to_ascii_lowercase()).copied()
@@ -94,7 +100,7 @@ fn validate_enum<T: StrEnum>(value: Option<String>) -> Result<T, ValidationError
 
 /// Turn a [`String`] into a [`Vec<char>`] with no duplicates.
 /// If no `value` is provided, return `default`
-fn uniquify_chars(value: Option<String>, default: &[char]) -> Vec<char> {
+pub fn uniquify_chars(value: Option<String>, default: &[char]) -> Vec<char> {
     value.map_or_else(
         || default.to_vec(),
         |inner| {
@@ -112,6 +118,7 @@ impl ConfigBuilder {
         Self::default()
     }
     pub fn build(self) -> Result<Config, ValidationError> {
+        // TODO add constraints to consts.rs
         let count = validate_int::<u8>(self.count, 1, 255, default::COUNT)?;
         let word_count = validate_int::<u8>(self.word_count, 0, 32, default::WORD_COUNT)?;
         let word_min_length =
