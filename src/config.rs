@@ -62,7 +62,7 @@ pub struct ConfigBuilder {
 
 /// Ensure an [`Integer`] is between `min` and `max`.
 /// If no `value` is provided, return `default`
-pub fn validate_int<T: Integer>(
+fn validate_int<T: Integer>(
     value: Option<String>,
     min: T,
     max: T,
@@ -91,7 +91,7 @@ pub fn validate_int<T: Integer>(
 
 /// Ensure `value` references a valid [`StrEnum`] member.
 /// If no `value` is provided, return `default`
-pub fn validate_enum<T: StrEnum>(value: Option<String>) -> Result<T, ValidationError> {
+fn validate_enum<T: StrEnum>(value: Option<String>) -> Result<T, ValidationError> {
     #[expect(clippy::or_fun_call, reason = "Function call is not expensive.")]
     value.map_or(Ok(T::default()), |inner| {
         T::to_member(&inner.to_ascii_lowercase()).copied()
@@ -100,7 +100,7 @@ pub fn validate_enum<T: StrEnum>(value: Option<String>) -> Result<T, ValidationE
 
 /// Turn a [`String`] into a [`Vec<char>`] with no duplicates.
 /// If no `value` is provided, return `default`
-pub fn uniquify_chars(value: Option<String>, default: &[char]) -> Vec<char> {
+fn uniquify_chars(value: Option<String>, default: &[char]) -> Vec<char> {
     value.map_or_else(
         || default.to_vec(),
         |inner| {
