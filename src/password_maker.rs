@@ -228,6 +228,7 @@ where
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::unwrap_used, reason = "testing")]
     use super::*;
     use crate::test_helpers::*;
 

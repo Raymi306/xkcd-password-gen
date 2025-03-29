@@ -137,6 +137,7 @@ pub enum RngType {
 
 #[cfg(test)]
 mod test {
+    #![allow(clippy::unwrap_used, reason = "testing")]
     use super::*;
     use std::mem::discriminant;
 

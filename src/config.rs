@@ -170,6 +170,7 @@ impl ConfigBuilder {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::unwrap_used, reason = "testing")]
     use super::*;
     use std::mem::discriminant;
 
