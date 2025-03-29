@@ -31,7 +31,7 @@ Logo by iiintangible
 ## Examples
 
 ```
-Usage: target/debug/xkcd-password-gen [options]
+Usage: fmn-passgen [options]
 
 Options:
     -h, --help
@@ -84,11 +84,16 @@ RNG TYPES:
 ```
 
 ```
-$ xkcd-password-gen -c 3
+$ fmn-passgen -c 3
 ?emblem|DOORMAN|luckiness|BROADNESS|19?
 =obsessed@CIRCULATE@epidemic@SPOTTED@90=
 !blouse|CHANNEL|venture|XEROX|79!
 ```
+
+## Features
+
+- gui
+  - enable dependencies to support building a GUI frontend.
 
 ## Installation
 
@@ -113,7 +118,7 @@ On most Linux systems, you can validate the archive by running `sha256sum -c $CH
 
 - eframe = "0.31" [(eframe docs)](https://docs.rs/eframe/latest/eframe/) [(egui docs)](https://docs.rs/egui/latest/egui/index.html)
 - egui_extras = "0.31" [(docs)](https://docs.rs/egui_extras/latest/egui_extras/)
-- ~~image = "0.25"~~ - *for adding png support to egui_extra in order to load the icon*
+- ~~image = "0.25"~~ - *only for adding png support to egui_extra to load the icon*
 
 ## [Benchmarks](benchmarks)
 
@@ -139,9 +144,8 @@ On most Linux systems, you can validate the archive by running `sha256sum -c $CH
 ### Housekeeping
 
 - test coverage
-- a lil more macro magic
+- more macro magic
 - make own UnwrapErr for TryRngCore
-- edit `run_bench.sh` to allow for saving version info
 
 ## Checklist Before Release
 

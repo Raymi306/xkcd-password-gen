@@ -1,5 +1,6 @@
 #!/bin/sh
 
+VERSION="$(cargo pkgid | cut -f 2 -d '@')"
 COMMIT="$(git rev-parse --verify HEAD)"
 VERIFY_EXIT=$?
 
@@ -12,19 +13,23 @@ SHORTCOMMIT="$(git rev-parse --short HEAD)"
 
 cargo build --profile release
 cargo build --profile small
+cargo build --profile --features gui --bin fmn-passgen-gui release
+cargo build --profile --features gui --bin fmn-passgen-gui small
 
 TMPFILE="$(basename $0)".md.tmp
-hyperfine --export-markdown $TMPFILE --warmup 3 'target/release/xkcd-password-gen -c 255 > /dev/null' 'target/small/xkcd-password-gen -c 255 > /dev/null'
+hyperfine --export-markdown $TMPFILE --warmup 3 'target/release/fmn-passgen -c 255 > /dev/null' 'target/small/fmn-passgen -c 255 > /dev/null'
 
-echo "# Benchmarks - [$SHORTCOMMIT](https://github.com/Raymi306/xkcd-password-gen/tree/$COMMIT)\n" > benchmarks/README.md
+echo "# $VERSION Benchmarks - [$SHORTCOMMIT](https://github.com/Raymi306/xkcd-password-gen/tree/$COMMIT)\n" > benchmarks/README.md
 echo "## hyperfine\n" >> benchmarks/README.md
 
 cat $TMPFILE >> benchmarks/README.md
 rm $TMPFILE
 
 echo "\n## Binary Sizes\n" >> benchmarks/README.md
-echo "- $(stat -c %s target/release/xkcd-password-gen | numfmt --to=iec) release" >> benchmarks/README.md
-echo "- $(stat -c %s target/small/xkcd-password-gen | numfmt --to=iec) small" >> benchmarks/README.md
+echo "- $(stat -c %s target/release/fmn-passgen | numfmt --to=iec) cli, release" >> benchmarks/README.md
+echo "- $(stat -c %s target/small/fmn-passgen | numfmt --to=iec) cli, small" >> benchmarks/README.md
+echo "- $(stat -c %s target/release/fmn-passgen-gui | numfmt --to=iec) gui, release" >> benchmarks/README.md
+echo "- $(stat -c %s target/small/fmn-passgen-gui | numfmt --to=iec) gui, small" >> benchmarks/README.md
 echo "\n## Wordlist Sizes\n" >> benchmarks/README.md
 echo "- $(stat -c %s wordlists/eff_large_wordlist.txt | numfmt --to=iec) eff_large_wordlist.txt" >> benchmarks/README.md
 
